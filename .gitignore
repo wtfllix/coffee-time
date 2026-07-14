@@ -1,0 +1,18 @@
+# Godot imported resources and editor state
+.godot/
+
+# Godot export output
+build/
+exports/
+
+# Platform and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local-only music staging. Approved tracks must be explicitly unignored
+# after their license record is completed in ASSETS.md.
+assets/music/*
+!assets/music/.gitkeep
+

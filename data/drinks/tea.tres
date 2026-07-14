@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="DrinkDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/orders/drink_definition.gd" id="1_drink"]
+
+[resource]
+script = ExtResource("1_drink")
+id = &"tea"
+display_name = "温暖红茶"
+preparation_seconds = 20.0
+consumption_seconds = 90.0
+

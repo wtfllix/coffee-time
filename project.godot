@@ -1,0 +1,36 @@
+; Coffee Time Godot project configuration.
+; 主要设置在这里集中管理，避免脚本里重复写死渲染与窗口默认值。
+
+config_version=5
+
+[application]
+
+config/name="Coffee Time"
+run/main_scene="res://scenes/main.tscn"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=270
+window/size/window_width_override=1280
+window/size/window_height_override=270
+window/size/resizable=false
+window/size/borderless=true
+window/size/always_on_top=true
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+
+[internationalization]
+
+locale/fallback="zh_CN"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/unsafe_property_access=1
+

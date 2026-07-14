@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="DrinkDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/orders/drink_definition.gd" id="1_drink"]
+
+[resource]
+script = ExtResource("1_drink")
+id = &"coffee"
+display_name = "安静咖啡"
+preparation_seconds = 15.0
+consumption_seconds = 60.0
+
