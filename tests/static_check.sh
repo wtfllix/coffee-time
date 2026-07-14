@@ -21,6 +21,7 @@ required_files=(
   "data/drinks/coffee.tres"
   "data/drinks/tea.tres"
   "tests/test_order_controller.gd"
+  "tests/test_cafe_layout.gd"
   "AGENTS.md"
   "PLAN.md"
   "PROGRESS.md"

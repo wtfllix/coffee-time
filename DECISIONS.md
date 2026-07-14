@@ -35,9 +35,9 @@
 ### DEC-005 — 像素视觉规范
 
 - 日期：2026-07-14
-- 状态：Accepted
+- 状态：Superseded by DEC-009
 - 决策：3/4 伪等距、32 像素网格、约 32×48 像素的 2.5 头身角色、四方向、8–10 FPS。
-- 影响：素材包必须匹配投影、网格、光向、轮廓和动画方向。
+- 影响：第一次 Windows 试玩后，四方向移动被八方向取代；其他视觉规格保持不变。
 
 ### DEC-006 — 素材库原型策略
 
@@ -59,6 +59,13 @@
 - 状态：Accepted
 - 决策：英文标识符配中文代码注释；`STRUCTURE.md` 集中说明入口、依赖和调用链；运行说明包含命令、预期结果和常见错误。
 - 影响：可读性与文档更新属于功能完成标准的一部分。
+
+### DEC-009 — 八方向移动
+
+- 日期：2026-07-14
+- 状态：Accepted
+- 决策：玩家与 NPC 使用八方向寻路和朝向；只有相邻正交格都可通行时才允许斜向移动，避免切过家具角落。
+- 影响：正式角色素材必须包含八方向动画，角色资产量高于原四方向方案。
 
 ## English
 
@@ -95,9 +102,9 @@ Statuses: `Accepted`, `Superseded`, and `Proposed`.
 ### DEC-005 — Pixel visual specification
 
 - Date: 2026-07-14
-- Status: Accepted
+- Status: Superseded by DEC-009
 - Decision: 3/4 pseudo-isometric view, 32-pixel grid, roughly 32×48-pixel 2.5-head-tall characters, four directions, and 8–10 FPS.
-- Consequence: asset packs must match projection, grid, light direction, outline, and animation directions.
+- Consequence: the first Windows playtest replaced four-direction movement with eight directions; the other visual specifications remain valid.
 
 ### DEC-006 — Asset-library prototype strategy
 
@@ -119,3 +126,10 @@ Statuses: `Accepted`, `Superseded`, and `Proposed`.
 - Status: Accepted
 - Decision: English identifiers with Chinese comments, centralized architecture and call-chain guidance in `STRUCTURE.md`, and run instructions with commands, expected output, and common errors.
 - Consequence: readability and documentation updates are part of feature completion.
+
+### DEC-009 — Eight-direction movement
+
+- Date: 2026-07-14
+- Status: Accepted
+- Decision: player and NPC pathfinding and facing use eight directions. Diagonal movement is allowed only when adjacent orthogonal cells are walkable, preventing corner cutting through furniture.
+- Consequence: production character packs must include eight-direction animation, increasing character asset work over the former four-direction approach.

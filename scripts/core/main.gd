@@ -28,6 +28,7 @@ var cafe: Control
 var toolbar: Control
 var order_controller: OrderController
 var order_panel: OrderPanel
+var running_embedded: bool = false
 
 
 func _ready() -> void:
@@ -38,6 +39,12 @@ func _ready() -> void:
 ## 根据当前显示器的“可用矩形”设置窗口，因此不会覆盖 Windows 任务栏。
 func _configure_desktop_window() -> void:
 	var window := get_window()
+	running_embedded = window.is_embedded()
+	if running_embedded:
+		# Godot 编辑器的嵌入预览不支持移动、置顶和禁用缩放。
+		# 跳过这些原生窗口操作，避免初学者看到与项目无关的报错。
+		return
+
 	var screen_index := window.current_screen
 	var usable_rect := DisplayServer.screen_get_usable_rect(screen_index)
 	var target_height := maxi(180, roundi(usable_rect.size.y * DEFAULT_HEIGHT_RATIO))
@@ -94,10 +101,17 @@ func _build_prototype() -> void:
 	order_panel.cancelled.connect(_on_order_cancelled)
 	cafe.set_order_state(order_controller.get_state_name())
 
+	if running_embedded:
+		toolbar.set_topmost_available(false)
+		toolbar.set_status(tr("当前为编辑器嵌入预览；请切换为浮动窗口测试桌面停靠"))
+
 
 ## 接收方：res://scripts/ui/prototype_toolbar.gd
 ## enabled 为 true 时，咖啡店覆盖普通窗口；false 时允许其他应用盖住它。
 func _on_always_on_top_changed(enabled: bool) -> void:
+	if running_embedded:
+		toolbar.set_status(tr("嵌入预览不支持置顶；请使用浮动窗口运行"))
+		return
 	get_window().always_on_top = enabled
 	toolbar.set_status(tr("已开启置顶") if enabled else tr("已取消置顶"))
 

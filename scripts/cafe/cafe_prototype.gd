@@ -163,7 +163,8 @@ func _build_pathfinder() -> void:
 	pathfinder.region = Rect2i(Vector2i.ZERO, grid_dimensions)
 	pathfinder.cell_size = Vector2(GRID_SIZE, GRID_SIZE)
 	pathfinder.offset = Vector2(GRID_SIZE * 0.5, GRID_SIZE * 0.5)
-	pathfinder.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
+	# 允许八方向移动，但只有相邻正交格都可通行时才能斜穿，防止切过家具角落。
+	pathfinder.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
 	pathfinder.update()
 
 	for y in range(grid_dimensions.y):
@@ -173,6 +174,12 @@ func _build_pathfinder() -> void:
 			var outside_floor := point.y < 112.0 or point.y > size.y - 18.0
 			if outside_floor or _is_inside_obstacle(point):
 				pathfinder.set_point_solid(cell, true)
+
+	# 座椅是可交互落点，不应继承桌子扩展障碍造成“家具阻挡”。
+	for seat_point in _get_seat_points():
+		var seat_cell := _world_to_cell(seat_point)
+		if _is_cell_in_bounds(seat_cell):
+			pathfinder.set_point_solid(seat_cell, false)
 
 
 func _request_path(clicked_position: Vector2) -> void:
@@ -239,11 +246,16 @@ func _try_request_interaction(clicked_position: Vector2) -> bool:
 		_request_path_with_context(approach, &"pickup", -1)
 		return true
 
-	var table_rects := _get_table_rects()
 	var seat_points := _get_seat_points()
 	for index in range(seat_points.size()):
-		if table_rects[index].grow(18.0).has_point(clicked_position):
+		var seat_zone := Rect2(seat_points[index] - Vector2(18.0, 18.0), Vector2(36.0, 36.0))
+		if seat_zone.has_point(clicked_position):
 			_request_path_with_context(seat_points[index], &"seat", index)
+			return true
+
+	for table_rect in _get_table_rects():
+		if table_rect.has_point(clicked_position):
+			status_changed.emit(tr("请点击桌边的绿色椅子入座"))
 			return true
 
 	return false
@@ -264,10 +276,10 @@ func _complete_pending_interaction() -> void:
 func _update_facing_direction(difference: Vector2) -> void:
 	if difference == Vector2.ZERO:
 		return
-	if absf(difference.x) > absf(difference.y):
-		facing_direction = Vector2.RIGHT if difference.x > 0.0 else Vector2.LEFT
-	else:
-		facing_direction = Vector2.DOWN if difference.y > 0.0 else Vector2.UP
+	# 将任意移动角度吸附到 45 度间隔，得到上、下、左、右和四个斜向。
+	var direction_step := PI / 4.0
+	var snapped_angle := roundf(difference.angle() / direction_step) * direction_step
+	facing_direction = Vector2.from_angle(snapped_angle).normalized()
 
 
 func _world_to_cell(world_position: Vector2) -> Vector2i:
@@ -293,24 +305,37 @@ func _is_inside_obstacle(point: Vector2) -> bool:
 
 
 func _get_counter_rect() -> Rect2:
-	return Rect2(28.0, 54.0, size.x * 0.48, 66.0)
+	return Rect2(28.0, 54.0, size.x * 0.52, 66.0)
 
 
 func _get_table_rects() -> Array[Rect2]:
+	var small_table_width := clampf(size.x * 0.075, 96.0, 144.0)
+	var shared_table_width := clampf(size.x * 0.26, 260.0, 500.0)
 	return [
-		Rect2(size.x * 0.58, size.y * 0.44, 96.0, 54.0),
-		Rect2(size.x * 0.76, size.y * 0.40, 96.0, 54.0),
-		Rect2(size.x * 0.62, size.y * 0.72, 220.0, 48.0),
+		Rect2(size.x * 0.58, size.y * 0.28, small_table_width, 54.0),
+		Rect2(size.x * 0.88 - small_table_width, size.y * 0.28, small_table_width, 54.0),
+		Rect2(size.x * 0.62, size.y * 0.72, shared_table_width, 48.0),
 	]
 
 
 func _get_seat_points() -> Array[Vector2]:
-	var points: Array[Vector2] = []
-	for table_rect in _get_table_rects():
-		var below_table := Vector2(table_rect.get_center().x, table_rect.end.y + 30.0)
-		var above_table := Vector2(table_rect.get_center().x, table_rect.position.y - 26.0)
-		# 共享长桌靠近画面底部，因此使用上侧座位，避免目标落到窗口外。
-		points.append(above_table if below_table.y > size.y - 24.0 else below_table)
+	var table_rects := _get_table_rects()
+	var first_table := table_rects[0]
+	var second_table := table_rects[1]
+	var shared_table := table_rects[2]
+	var points: Array[Vector2] = [
+		Vector2(first_table.position.x + first_table.size.x * 0.3, first_table.end.y + 28.0),
+		Vector2(first_table.position.x + first_table.size.x * 0.7, first_table.end.y + 28.0),
+		Vector2(second_table.position.x + second_table.size.x * 0.3, second_table.end.y + 28.0),
+		Vector2(second_table.position.x + second_table.size.x * 0.7, second_table.end.y + 28.0),
+	]
+
+	# 共享长桌靠近画面底部，四个座位沿上侧排开，确保所有落点都在窗口内。
+	for ratio in [0.15, 0.38, 0.62, 0.85]:
+		points.append(Vector2(
+			shared_table.position.x + shared_table.size.x * ratio,
+			shared_table.position.y - 28.0
+		))
 	return points
 
 
@@ -349,16 +374,22 @@ func _draw_furniture() -> void:
 	_draw_table(table_rects[0], false)
 	_draw_table(table_rects[1], false)
 	_draw_table(table_rects[2], true)
+	for seat_point in _get_seat_points():
+		draw_circle(seat_point, 10.0, COLOR_CHAIR)
 
 
 func _draw_table(table_rect: Rect2, shared: bool) -> void:
 	draw_rect(table_rect, COLOR_TABLE)
-	var chair_count := 4 if shared else 2
-	for index in range(chair_count):
-		var ratio := float(index + 1) / float(chair_count + 1)
-		var chair_x := table_rect.position.x + table_rect.size.x * ratio
-		var chair_y := table_rect.end.y + 10.0
-		draw_circle(Vector2(chair_x, chair_y), 8.0, COLOR_CHAIR)
+	if shared:
+		draw_string(
+			ThemeDB.fallback_font,
+			table_rect.position + Vector2(50.0, 30.0),
+			tr("共享长桌"),
+			HORIZONTAL_ALIGNMENT_LEFT,
+			-1.0,
+			14,
+			COLOR_DRINK
+		)
 
 
 func _draw_order_visuals() -> void:

@@ -41,9 +41,10 @@ coffee-time/
 ├── assets/
 │   ├── music/              # 已批准的本地音乐
 │   └── placeholder/        # 原型占位素材
-└── tests/                  # 计划中：脚本与场景测试
+└── tests/                  # 自动化与静态检查
     ├── static_check.sh     # 不依赖 Godot 的引用与缩进检查
-    └── test_order_controller.gd # 单杯状态机测试
+    ├── test_order_controller.gd # 单杯状态机测试
+    └── test_cafe_layout.gd      # 1920×270 宽度与座位可达性测试
 ```
 
 ### 当前运行关系
@@ -60,7 +61,7 @@ project.godot
 
 `main.gd` 读取当前显示器的可用矩形，将窗口调整为全宽、25% 高，并贴到任务栏上方。它创建色块咖啡店和原型工具栏。
 
-`cafe_prototype.gd` 将可行走区域离散为 32 像素网格。鼠标点击地面后，脚本计算网格路径，并让占位玩家沿路径移动。柜台和桌子会被标记为不可通行。
+`cafe_prototype.gd` 将可行走区域离散为 32 像素网格。鼠标点击地面后，脚本计算八方向网格路径，并让占位玩家沿路径移动。柜台和桌子不可通行，8 个椅子落点会被明确保留为可通行。
 
 `prototype_toolbar.gd` 发送置顶切换与退出信号。信号由 `main.gd` 接收，因此 UI 不直接管理窗口生命周期。
 
@@ -98,6 +99,7 @@ project.godot
 ```bash
 ./tests/static_check.sh
 godot4 --headless --path . --quit
+godot4 --headless --path . --script tests/test_cafe_layout.gd
 ```
 
 第一条检查必需文件、`res://` 文件引用和 GDScript 缩进；第二条才是权威的 Godot 解析检查。
@@ -132,7 +134,8 @@ coffee-time/
 │   ├── orders/
 │   │   ├── drink_definition.gd
 │   │   └── order_controller.gd
-│   └── ui/prototype_toolbar.gd
+│   └── ui/
+│       ├── prototype_toolbar.gd
 │       └── order_panel.gd
 ├── data/drinks/
 ├── assets/
@@ -140,7 +143,8 @@ coffee-time/
 │   └── placeholder/
 └── tests/
     ├── static_check.sh
-    └── test_order_controller.gd
+    ├── test_order_controller.gd
+    └── test_cafe_layout.gd
 ```
 
 ### Current runtime relationships
@@ -157,7 +161,7 @@ project.godot
 
 `main.gd` reads the current monitor's usable rectangle, makes the window full-width and 25% high, and docks it above the taskbar. It assembles the blockout café and prototype toolbar.
 
-`cafe_prototype.gd` divides the walkable area into a 32-pixel grid. A floor click produces a grid path that the placeholder player follows. Counters and tables are solid cells.
+`cafe_prototype.gd` divides the walkable area into a 32-pixel grid. A floor click produces an eight-direction grid path that the placeholder player follows. Counters and tables are solid, while all eight chair destinations are explicitly kept walkable.
 
 `prototype_toolbar.gd` emits always-on-top and quit signals. `main.gd` owns window lifecycle so that the UI stays decoupled.
 
@@ -195,6 +199,7 @@ These do not exist yet and must not be described as implemented:
 ```bash
 ./tests/static_check.sh
 godot4 --headless --path . --quit
+godot4 --headless --path . --script tests/test_cafe_layout.gd
 ```
 
 The first command checks required files, `res://` file references, and GDScript indentation. The second is the authoritative Godot parse check.

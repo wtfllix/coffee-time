@@ -13,6 +13,7 @@ signal always_on_top_changed(enabled: bool)
 signal quit_requested
 
 var status_label: Label
+var topmost_toggle: CheckButton
 
 
 func _ready() -> void:
@@ -23,6 +24,18 @@ func _ready() -> void:
 func set_status(message: String) -> void:
 	if is_instance_valid(status_label):
 		status_label.text = message
+
+
+## 嵌入编辑器预览时禁用置顶按钮，避免触发原生窗口限制错误。
+func set_topmost_available(available: bool) -> void:
+	if not is_instance_valid(topmost_toggle):
+		return
+	topmost_toggle.disabled = not available
+	topmost_toggle.tooltip_text = (
+		tr("关闭后，其他窗口可以覆盖咖啡店")
+		if available
+		else tr("编辑器嵌入预览不支持置顶，请切换为浮动窗口")
+	)
 
 
 func _build_controls() -> void:
@@ -36,7 +49,7 @@ func _build_controls() -> void:
 	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(status_label)
 
-	var topmost_toggle := CheckButton.new()
+	topmost_toggle = CheckButton.new()
 	topmost_toggle.text = tr("置顶")
 	topmost_toggle.button_pressed = true
 	topmost_toggle.tooltip_text = tr("关闭后，其他窗口可以覆盖咖啡店")
@@ -56,4 +69,3 @@ func _on_topmost_toggled(enabled: bool) -> void:
 
 func _on_quit_pressed() -> void:
 	quit_requested.emit()
-
