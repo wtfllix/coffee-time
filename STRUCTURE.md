@@ -65,7 +65,7 @@ project.godot
 
 `prototype_toolbar.gd` 发送置顶切换与退出信号。信号由 `main.gd` 接收，因此 UI 不直接管理窗口生命周期。
 
-`order_controller.gd` 是与画面解耦的单杯状态机。`main.gd` 将咖啡店空间交互转为状态机操作，并把状态变化再传给工具栏和场景。
+`order_controller.gd` 是与画面解耦的单杯状态机。`main.gd` 将咖啡店空间交互转为状态机操作，并把状态变化再传给工具栏和场景。每次状态切换还会输出以 `[CoffeeTime][OrderLoop]` 开头的结构化打点日志；同一杯饮品共享 `loop_id`，`event=loop_completed` 表示空杯已清理并恢复为可点单状态。
 
 ### 点击移动调用链
 
@@ -165,7 +165,7 @@ project.godot
 
 `prototype_toolbar.gd` emits always-on-top and quit signals. `main.gd` owns window lifecycle so that the UI stays decoupled.
 
-`order_controller.gd` is a view-independent one-drink state machine. `main.gd` converts spatial interactions into state-machine operations and reflects state changes back into the café and toolbar.
+`order_controller.gd` is a view-independent one-drink state machine. `main.gd` converts spatial interactions into state-machine operations and reflects state changes back into the café and toolbar. Every transition also prints a structured marker prefixed with `[CoffeeTime][OrderLoop]`; one drink shares a `loop_id`, and `event=loop_completed` means the empty cup was dismissed and ordering is available again.
 
 ### Click-movement call chain
 

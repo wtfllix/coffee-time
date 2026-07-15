@@ -10,12 +10,22 @@ extends SceneTree
 
 const OrderControllerScript := preload("res://scripts/orders/order_controller.gd")
 const CoffeeDrink: DrinkDefinition = preload("res://data/drinks/coffee.tres")
+const TeaDrink: DrinkDefinition = preload("res://data/drinks/tea.tres")
+const EXPECTED_TEST_CONSUMPTION_SECONDS := 3.0
 
 
 func _init() -> void:
 	var controller: OrderController = OrderControllerScript.new()
 	root.add_child(controller)
 
+	_check(
+		is_equal_approx(CoffeeDrink.consumption_seconds, EXPECTED_TEST_CONSUMPTION_SECONDS),
+		"coffee uses the short manual-test consumption time"
+	)
+	_check(
+		is_equal_approx(TeaDrink.consumption_seconds, EXPECTED_TEST_CONSUMPTION_SECONDS),
+		"tea uses the short manual-test consumption time"
+	)
 	_check(controller.get_state_name() == &"idle", "initial state is idle")
 	_check(not controller.pick_up(), "cannot pick up before ordering")
 	_check(controller.place_order(CoffeeDrink), "can place one order")

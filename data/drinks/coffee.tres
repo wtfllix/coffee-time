@@ -7,5 +7,5 @@ script = ExtResource("1_drink")
 id = &"coffee"
 display_name = "安静咖啡"
 preparation_seconds = 15.0
-consumption_seconds = 60.0
+consumption_seconds = 3.0
 

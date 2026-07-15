@@ -4,12 +4,12 @@
 
 ### 当前快照
 
-- 当前阶段：第一轮色块原型启动。
-- 已完成：策划主体与素材策略已锁定；双语文档、Godot 工程骨架、底部窗口脚本、色块咖啡店、家具避障和点击移动代码已建立。
-- 进行中：Windows 第二轮实机验证。
-- 下一步：使用浮动窗口模式复测任务栏停靠、1920 像素宽度利用、八方向移动和 8 个座位点击。
-- 阻塞：现有 `.git` 目录只读，无法初始化有效 Git 仓库。共享环境没有图形显示服务，无法在此查看桌面窗口。
-- 测试状态：Godot 4.7 编辑器导入、5 帧运行、订单状态机与 1920×270 布局测试通过；Windows 第二轮视觉验证待执行。
+- 当前阶段：第一轮色块原型的核心游戏交互验证。
+- 已完成：策划主体与素材策略已锁定；双语文档、Godot 工程骨架、色块咖啡店、家具避障、八向点击移动和单杯订单状态机已建立。Windows 实机已确认八向移动、8 个座位入座，以及点单、等待、取餐到入座流程正常。
+- 进行中：使用 3 秒测试饮用时间和结构化打点日志验证游戏核心循环；最终窗口停靠、尺寸和置顶行为延后处理。
+- 下一步：在 Godot 输出面板确认 `drinking_started`、`drinking_completed` 和 `loop_completed` 连续出现；随后加入占位 NPC 与玩家优先规则。
+- 阻塞：Windows 实机观察到当前渲染为 1280×720，置顶开关不正常；这些窗口问题已决定延期，不阻塞当前游戏逻辑开发。共享环境无法直接完成桌面窗口视觉检查。
+- 测试状态：Godot 4.7 编辑器导入、5 帧运行、订单状态机与 1920×270 自动布局测试通过；Windows 实机人工验证通过八向移动、8 个座位和点单到入座流程，饮用结束后的循环尚待人工确认。
 - 已通过检查：`./tests/static_check.sh`；必需文件、`res://` 文件引用和 GDScript 缩进一致。
 
 ### 验证命令
@@ -40,17 +40,19 @@ godot4 --headless --path . --script tests/test_cafe_layout.gd
 - 2026-07-14 Asia/Hong_Kong：完成窗口、工具栏、色块场景与点击移动的第一批代码；静态仓库检查通过，Godot 运行验证待执行。
 - 2026-07-14 Asia/Hong_Kong：Godot 4.7 安装完成；编辑器导入与 5 帧运行通过。加入单杯订单、点单菜单、取餐、入座、测试饮用计时和续杯气泡，状态机自动化测试通过。
 - 2026-07-14 Asia/Hong_Kong：收到第一次 Windows 反馈。修复嵌入窗口原生操作报错、宽屏留白、四方向移动和座位不可达；新增 1920×270 自动布局测试，确认 8 个座位全部可达。
+- 2026-07-15 Asia/Shanghai：第二次 Windows 实测确认当前渲染为 1280×720；八向移动、8 个座位入座及点单到入座流程正常，置顶开关异常。决定暂缓最终窗口行为，优先完善饮用后循环与游戏内容。
+- 2026-07-15 Asia/Shanghai：咖啡和红茶的原型饮用时间统一缩短为 3 秒；订单状态机加入 `[CoffeeTime][OrderLoop]` 打点日志，以 `loop_id` 追踪从点单到清理空杯的完整循环。
 
 ## English
 
 ### Current snapshot
 
-- Phase: first blockout prototype kickoff.
-- Completed: planning and asset strategy are locked; bilingual documentation, the Godot skeleton, bottom-window script, blockout café, furniture obstacles, and click-movement code are established.
-- In progress: second Windows validation pass.
-- Next: retest taskbar docking, 1920-pixel width usage, eight-direction movement, and all eight seat clicks in floating-window mode.
-- Blockers: the existing `.git` directory is read-only, preventing repository initialization. The shared environment has no graphical display service, so the desktop window cannot be visually inspected here.
-- Test status: Godot 4.7 editor import, a five-frame runtime smoke test, the order state-machine test, and the 1920×270 layout test pass; the second Windows visual pass remains pending.
+- Phase: core gameplay interaction validation for the first blockout prototype.
+- Completed: planning and asset strategy are locked; bilingual documentation, the Godot skeleton, blockout café, furniture avoidance, eight-direction click movement, and the one-drink state machine are established. Windows testing confirms eight-direction movement, seating at all eight seats, and the order-to-seating flow.
+- In progress: validate the core game loop with a three-second test consumption time and structured markers; final window docking, sizing, and always-on-top behavior are deferred.
+- Next: confirm that `drinking_started`, `drinking_completed`, and `loop_completed` appear in sequence in the Godot output; then add placeholder NPCs and player-priority rules.
+- Blockers: Windows currently renders at 1280×720 and the always-on-top toggle does not work correctly. These window issues are deferred and do not block gameplay work. The shared environment cannot visually inspect desktop-window behavior.
+- Test status: Godot 4.7 editor import, a five-frame runtime smoke test, the order state-machine test, and the automated 1920×270 layout test pass. Windows manual testing confirms eight-direction movement, all eight seats, and ordering through seating; the post-drinking loop still needs manual confirmation.
 - Passed check: `./tests/static_check.sh`; required files, `res://` references, and GDScript indentation are consistent.
 
 ### Verification commands
@@ -81,3 +83,5 @@ Common failures:
 - 2026-07-14 Asia/Hong_Kong: completed the first window, toolbar, blockout scene, and click-movement code; repository static checks pass, while Godot runtime validation remains pending.
 - 2026-07-14 Asia/Hong_Kong: installed Godot 4.7; editor import and a five-frame runtime test pass. Added one-drink ordering, menu, pickup, seating, shortened drinking timer, and refill bubble; the automated state-machine test passes.
 - 2026-07-14 Asia/Hong_Kong: received the first Windows feedback. Fixed embedded-window native-operation errors, unused wide-screen space, four-direction movement, and unreachable seats; added a 1920×270 layout test confirming all eight seats are reachable.
+- 2026-07-15 Asia/Shanghai: the second Windows test observed 1280×720 rendering; eight-direction movement, all eight seats, and ordering through seating work, while the always-on-top toggle does not. Final window behavior is deferred so work can focus on the post-drinking loop and gameplay content.
+- 2026-07-15 Asia/Shanghai: coffee and tea now use a three-second prototype consumption time. The order state machine prints `[CoffeeTime][OrderLoop]` markers with a shared `loop_id` from ordering through empty-cup cleanup.

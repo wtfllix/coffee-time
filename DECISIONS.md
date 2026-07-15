@@ -67,6 +67,13 @@
 - 决策：玩家与 NPC 使用八方向寻路和朝向；只有相邻正交格都可通行时才允许斜向移动，避免切过家具角落。
 - 影响：正式角色素材必须包含八方向动画，角色资产量高于原四方向方案。
 
+### DEC-010 — 核心游戏体验优先于最终窗口行为
+
+- 日期：2026-07-15
+- 状态：Accepted
+- 决策：保留底部桌面窗口作为产品目标，但暂缓处理最终渲染尺寸、停靠与置顶异常；先完成饮品循环、占位 NPC 和玩家优先规则。
+- 影响：当前 1280×720 渲染与置顶开关异常被记录为延期问题，不阻塞核心游戏逻辑开发；核心体验稳定后必须恢复 Windows 实机验证。
+
 ## English
 
 Statuses: `Accepted`, `Superseded`, and `Proposed`.
@@ -133,3 +140,10 @@ Statuses: `Accepted`, `Superseded`, and `Proposed`.
 - Status: Accepted
 - Decision: player and NPC pathfinding and facing use eight directions. Diagonal movement is allowed only when adjacent orthogonal cells are walkable, preventing corner cutting through furniture.
 - Consequence: production character packs must include eight-direction animation, increasing character asset work over the former four-direction approach.
+
+### DEC-010 — Core gameplay before final window behavior
+
+- Date: 2026-07-15
+- Status: Accepted
+- Decision: retain the bottom desktop window as a product goal, but defer final rendering size, docking, and always-on-top issues while completing the drink loop, placeholder NPCs, and player-priority rules.
+- Consequence: the current 1280×720 rendering and broken always-on-top toggle are tracked as deferred issues rather than gameplay blockers; Windows validation must resume after the core experience is stable.

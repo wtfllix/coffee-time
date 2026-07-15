@@ -35,6 +35,10 @@ godot4 --path . --editor
 - 窗口遮挡工作内容：关闭右上角“置顶”，记录实际使用感受，后续再决定是否增加快速隐藏。
 - 画面与文档描述不同：先查看 [`PROGRESS.md`](PROGRESS.md) 的测试状态，未运行验证的功能不应视为完成。
 
+### 订单循环日志
+
+测试饮品时，在 Godot 的 **输出** 面板搜索 `[CoffeeTime][OrderLoop]`。同一杯饮品的日志使用相同 `loop_id`，正常顺序为 `order_placed`、`preparation_completed`、`drink_picked_up`、`drinking_started`、`drinking_completed`、`loop_completed`。最后一个事件表示空杯已经清理，可以再次点单。
+
 ### 初学者阅读路线
 
 先阅读 [`STRUCTURE.md`](STRUCTURE.md)，再按其中顺序打开三个脚本。代码标识符使用英文，中文注释解释职责、原因、单位和信号流。
@@ -73,6 +77,10 @@ Expected: an opaque café strip appears above the taskbar. Clicking walkable flo
 - Clicking furniture does not move: expected; the toolbar explains that furniture blocks the destination.
 - The window covers work: turn off “Always on top,” record the experience, and revisit quick-hide behavior later.
 - Behavior differs from documentation: inspect the test status in [`PROGRESS.md`](PROGRESS.md); unexecuted features are not considered verified.
+
+### Order-loop markers
+
+While testing a drink, search for `[CoffeeTime][OrderLoop]` in Godot's **Output** panel. One drink keeps the same `loop_id`. The expected sequence is `order_placed`, `preparation_completed`, `drink_picked_up`, `drinking_started`, `drinking_completed`, and `loop_completed`. The final event means the empty cup was dismissed and another order can be placed.
 
 ### Beginner reading path
 

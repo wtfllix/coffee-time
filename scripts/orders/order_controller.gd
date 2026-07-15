@@ -4,11 +4,13 @@ extends Node
 ## 单人版“一次一杯”订单状态机。
 ##
 ## 输入：点单、取餐、开始饮用和关闭空杯提示。
-## 输出：state_changed，供主场景更新画面和工具栏。
+## 输出：state_changed 供主场景更新画面和工具栏；结构化日志供测试时追踪完整循环。
 ## 依赖：res://scripts/orders/drink_definition.gd
 
 ## 发送方：本状态机；接收方：res://scripts/core/main.gd。
 signal state_changed(state_name: StringName, status_message: String)
+
+const LOG_PREFIX := "[CoffeeTime][OrderLoop]"
 
 enum State {
 	IDLE,
@@ -22,6 +24,7 @@ enum State {
 var state: State = State.IDLE
 var current_drink: DrinkDefinition
 var remaining_seconds: float = 0.0
+var loop_id: int = 0
 
 
 func _ready() -> void:
@@ -47,6 +50,7 @@ func place_order(drink: DrinkDefinition) -> bool:
 	if state != State.IDLE or drink == null:
 		return false
 
+	loop_id += 1
 	current_drink = drink
 	remaining_seconds = drink.preparation_seconds
 	_transition_to(
@@ -80,9 +84,10 @@ func start_drinking() -> bool:
 func dismiss_empty_cup() -> bool:
 	if state != State.EMPTY:
 		return false
+	var completed_drink_id := current_drink.id if current_drink != null else &""
 	current_drink = null
 	remaining_seconds = 0.0
-	_transition_to(State.IDLE, tr("空杯已收起，可以再次点单"))
+	_transition_to(State.IDLE, tr("空杯已收起，可以再次点单"), completed_drink_id)
 	return true
 
 
@@ -122,8 +127,54 @@ func get_hint() -> String:
 			return tr("当前状态未知")
 
 
-func _transition_to(next_state: State, message: String) -> void:
+func _transition_to(
+	next_state: State,
+	message: String,
+	log_drink_id: StringName = &""
+) -> void:
+	var previous_state_name := get_state_name()
 	state = next_state
 	set_process(state == State.PREPARING or state == State.DRINKING)
+	_log_transition(previous_state_name, get_state_name(), log_drink_id)
 	state_changed.emit(get_state_name(), message)
+
+
+func _log_transition(
+	previous_state_name: StringName,
+	next_state_name: StringName,
+	log_drink_id: StringName
+) -> void:
+	var drink_id := log_drink_id
+	if drink_id.is_empty() and current_drink != null:
+		drink_id = current_drink.id
+
+	print(
+		"%s loop_id=%d event=%s from=%s to=%s drink_id=%s remaining_seconds=%.2f elapsed_msec=%d"
+		% [
+			LOG_PREFIX,
+			loop_id,
+			_get_log_event_name(state),
+			previous_state_name,
+			next_state_name,
+			drink_id,
+			remaining_seconds,
+			Time.get_ticks_msec(),
+		]
+	)
+
+
+func _get_log_event_name(state_value: State) -> StringName:
+	match state_value:
+		State.PREPARING:
+			return &"order_placed"
+		State.READY:
+			return &"preparation_completed"
+		State.CARRIED:
+			return &"drink_picked_up"
+		State.DRINKING:
+			return &"drinking_started"
+		State.EMPTY:
+			return &"drinking_completed"
+		_:
+			return &"loop_completed"
 
