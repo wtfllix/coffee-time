@@ -135,7 +135,9 @@ func _on_cafe_interaction_requested(kind: StringName, index: int) -> void:
 			if not order_controller.pick_up():
 				toolbar.set_status(order_controller.get_hint())
 		&"seat":
-			cafe.confirm_seated(index)
+			if not cafe.confirm_seated(index):
+				toolbar.set_status(tr("这个座位暂时不可用，请选择绿色空座"))
+				return
 			if order_controller.get_state_name() == &"carried":
 				order_controller.start_drinking()
 			else:

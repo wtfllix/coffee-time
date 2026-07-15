@@ -4,7 +4,7 @@ extends Control
 ##
 ## 输入：咖啡店区域内的鼠标左键点击。
 ## 输出：status_changed，用于向工具栏解释当前行为。
-## 依赖：Godot 4.7 的 AStarGrid2D；由 res://scripts/core/main.gd 创建。
+## 依赖：Godot 4.7 的 AStarGrid2D、res://scripts/actors/seat_occupancy.gd；由 res://scripts/core/main.gd 创建。
 ##
 ## 当前边界：
 ## - 使用程序绘制占位画面，不包含正式像素素材。
@@ -20,6 +20,14 @@ signal interaction_requested(kind: StringName, index: int)
 ## 寻路网格边长，单位：像素。
 const GRID_SIZE: float = 32.0
 
+const SeatOccupancyScript := preload("res://scripts/actors/seat_occupancy.gd")
+
+## 第一轮原型中两名固定顾客使用的座位索引。
+const PLACEHOLDER_CUSTOMER_SEAT_INDICES: Array[int] = [1, 6]
+
+## 无论顾客数量如何变化，至少为玩家保留的座位数。
+const MINIMUM_PLAYER_SEATS: int = 2
+
 ## 玩家移动速度，单位：像素/秒。
 const PLAYER_SPEED: float = 180.0
 
@@ -33,8 +41,12 @@ const COLOR_COUNTER := Color("#76523a")
 const COLOR_COUNTER_TOP := Color("#a8784f")
 const COLOR_TABLE := Color("#8f6243")
 const COLOR_CHAIR := Color("#59705c")
+const COLOR_OCCUPIED_CHAIR := Color("#554a45")
 const COLOR_PLAYER := Color("#3f6f78")
 const COLOR_PLAYER_HIGHLIGHT := Color("#f2d6a2")
+const COLOR_BARISTA := Color("#8b4f45")
+const COLOR_CUSTOMER_ONE := Color("#6a5b8c")
+const COLOR_CUSTOMER_TWO := Color("#8a7048")
 const COLOR_TARGET := Color("#fff0b8")
 const COLOR_DRINK := Color("#f3e1bd")
 const COLOR_BUBBLE := Color("#fff7df")
@@ -51,6 +63,7 @@ var pending_interaction: StringName = &""
 var pending_interaction_index: int = -1
 var current_order_state: StringName = &"idle"
 var seated_index: int = -1
+var seat_occupancy := SeatOccupancyScript.new()
 
 
 func _ready() -> void:
@@ -91,6 +104,7 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 			return
 		seated_index = -1
+		seat_occupancy.release_player_seat()
 		pending_interaction = &""
 		pending_interaction_index = -1
 		_request_path(event.position)
@@ -100,6 +114,7 @@ func _gui_input(event: InputEvent) -> void:
 func _draw() -> void:
 	_draw_room()
 	_draw_furniture()
+	_draw_placeholder_actors()
 	_draw_order_visuals()
 	_draw_target_marker()
 	_draw_player()
@@ -111,15 +126,28 @@ func set_order_state(state_name: StringName) -> void:
 	queue_redraw()
 
 
-## 角色抵达座位后固定到座椅点，避免路径格中心造成视觉漂移。
-func confirm_seated(index: int) -> void:
+## 角色抵达座位后尝试占座并固定到座椅点；座位不可用时返回 false。
+func confirm_seated(index: int) -> bool:
 	var seat_points := _get_seat_points()
 	if index < 0 or index >= seat_points.size():
-		return
+		return false
+	if not seat_occupancy.claim_player_seat(index):
+		return false
 	seated_index = index
 	player_position = seat_points[index]
 	facing_direction = Vector2.UP
 	queue_redraw()
+	return true
+
+
+## 返回指定座位是否可供玩家选择，供主场景与自动化测试使用。
+func is_seat_available_for_player(index: int) -> bool:
+	return seat_occupancy.is_available_for_player(index)
+
+
+## 返回当前占位顾客使用的座位索引副本。
+func get_customer_seat_indices() -> Array[int]:
+	return seat_occupancy.get_customer_seat_indices()
 
 
 ## 窗口尺寸变化后重建家具矩形和寻路网格。
@@ -127,6 +155,7 @@ func _rebuild_layout() -> void:
 	if size.x < 320.0 or size.y < 160.0:
 		return
 
+	_configure_seat_occupancy()
 	_build_obstacles()
 	_build_pathfinder()
 
@@ -142,6 +171,16 @@ func _rebuild_layout() -> void:
 	pending_interaction = &""
 	pending_interaction_index = -1
 	queue_redraw()
+
+
+func _configure_seat_occupancy() -> void:
+	seat_occupancy.configure(
+		_get_seat_points().size(),
+		PLACEHOLDER_CUSTOMER_SEAT_INDICES,
+		MINIMUM_PLAYER_SEATS
+	)
+	if seated_index >= 0 and not seat_occupancy.claim_player_seat(seated_index):
+		seated_index = -1
 
 
 func _build_obstacles() -> void:
@@ -175,11 +214,13 @@ func _build_pathfinder() -> void:
 			if outside_floor or _is_inside_obstacle(point):
 				pathfinder.set_point_solid(cell, true)
 
-	# 座椅是可交互落点，不应继承桌子扩展障碍造成“家具阻挡”。
-	for seat_point in _get_seat_points():
+	# 空座是可交互落点；顾客座位保持阻挡，避免角色寻路穿过占位 NPC。
+	var seat_points := _get_seat_points()
+	for index in range(seat_points.size()):
+		var seat_point := seat_points[index]
 		var seat_cell := _world_to_cell(seat_point)
 		if _is_cell_in_bounds(seat_cell):
-			pathfinder.set_point_solid(seat_cell, false)
+			pathfinder.set_point_solid(seat_cell, seat_occupancy.is_customer_seat(index))
 
 
 func _request_path(clicked_position: Vector2) -> void:
@@ -250,6 +291,9 @@ func _try_request_interaction(clicked_position: Vector2) -> bool:
 	for index in range(seat_points.size()):
 		var seat_zone := Rect2(seat_points[index] - Vector2(18.0, 18.0), Vector2(36.0, 36.0))
 		if seat_zone.has_point(clicked_position):
+			if not seat_occupancy.is_available_for_player(index):
+				status_changed.emit(tr("这个座位已有顾客，请选择绿色空座"))
+				return true
 			_request_path_with_context(seat_points[index], &"seat", index)
 			return true
 
@@ -344,6 +388,11 @@ func _get_pickup_cup_position() -> Vector2:
 	return Vector2(counter_rect.position.x + counter_rect.size.x * 0.75, counter_rect.end.y - 18.0)
 
 
+func _get_barista_position() -> Vector2:
+	var counter_rect := _get_counter_rect()
+	return Vector2(counter_rect.position.x + counter_rect.size.x * 0.32, counter_rect.position.y + 24.0)
+
+
 func _get_refill_bubble_rect() -> Rect2:
 	return Rect2(player_position + Vector2(18.0, -52.0), Vector2(42.0, 34.0))
 
@@ -374,8 +423,34 @@ func _draw_furniture() -> void:
 	_draw_table(table_rects[0], false)
 	_draw_table(table_rects[1], false)
 	_draw_table(table_rects[2], true)
-	for seat_point in _get_seat_points():
-		draw_circle(seat_point, 10.0, COLOR_CHAIR)
+	var seat_points := _get_seat_points()
+	for index in range(seat_points.size()):
+		var chair_color := COLOR_OCCUPIED_CHAIR if seat_occupancy.is_customer_seat(index) else COLOR_CHAIR
+		draw_circle(seat_points[index], 10.0, chair_color)
+
+
+func _draw_placeholder_actors() -> void:
+	_draw_placeholder_actor(_get_barista_position(), COLOR_BARISTA, tr("咖啡师"))
+	var seat_points := _get_seat_points()
+	var customer_seats := seat_occupancy.get_customer_seat_indices()
+	for customer_index in range(customer_seats.size()):
+		var seat_index := customer_seats[customer_index]
+		var customer_color := COLOR_CUSTOMER_ONE if customer_index == 0 else COLOR_CUSTOMER_TWO
+		_draw_placeholder_actor(seat_points[seat_index], customer_color, tr("顾客"))
+
+
+func _draw_placeholder_actor(actor_position: Vector2, body_color: Color, label: String) -> void:
+	draw_circle(actor_position + Vector2(0.0, -12.0), 8.0, COLOR_PLAYER_HIGHLIGHT)
+	draw_circle(actor_position, PLAYER_RADIUS, body_color)
+	draw_string(
+		ThemeDB.fallback_font,
+		actor_position + Vector2(-22.0, -28.0),
+		label,
+		HORIZONTAL_ALIGNMENT_CENTER,
+		44.0,
+		12,
+		Color.WHITE
+	)
 
 
 func _draw_table(table_rect: Rect2, shared: bool) -> void:
