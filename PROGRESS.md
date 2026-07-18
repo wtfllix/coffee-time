@@ -4,12 +4,12 @@
 
 ### 当前快照
 
-- 当前阶段：第一轮色块原型的占位 NPC 与座位规则实机验证。
+- 当前阶段：第一轮色块原型的播放器接口与本地设置。
 - 已完成：策划主体与素材策略已锁定；双语文档、Godot 工程骨架、色块咖啡店、八向点击移动、单杯订单状态机、一名占位咖啡师和两名固定占位顾客已建立。座位规则保证顾客座位阻挡寻路、玩家不能占用，并至少保留两个玩家可用座位。
-- 进行中：Windows 实机验证占位 NPC 的显示、顾客占座提示和六个玩家空座；最终窗口停靠、尺寸和置顶行为延后处理。
-- 下一步：确认两名顾客所在座位不可点击入座、其余六个绿色座位仍可到达；通过后进入播放器接口与本地设置。
+- 进行中：设计并实现最小音乐播放器接口与本地设置；最终窗口停靠、尺寸和置顶行为延后处理。
+- 下一步：建立音乐频道、播放状态与本地设置的最小数据流；测试曲目仍须在 `ASSETS.md` 完成授权批准后才能导入。
 - 阻塞：Windows 实机观察到当前渲染为 1280×720，置顶开关不正常；这些窗口问题已决定延期，不阻塞当前游戏逻辑开发。共享环境无法直接完成桌面窗口视觉检查。
-- 测试状态：Godot 4.7 编辑器导入、5 帧运行、订单状态机、座位优先规则与 1920×270 自动布局测试通过；布局测试确认两名顾客阻挡其座位、六个空座从入口可达。Windows 已人工验证连续两次完整饮品循环，NPC 视觉验证待执行。
+- 测试状态：Godot 4.7 编辑器导入、5 帧运行、订单状态机、座位优先规则与 1920×270 自动布局测试通过；布局测试确认两名顾客阻挡其座位、六个空座从入口可达。Windows 已人工验证连续两次完整饮品循环、占位 NPC 正常显示、两名顾客占座不可入座且其余六个空座交互正常。
 - 已通过检查：`./tests/static_check.sh`；必需文件、`res://` 文件引用和 GDScript 缩进一致。
 
 ### 验证命令
@@ -45,17 +45,18 @@ godot4 --headless --path . --script tests/test_seat_occupancy.gd
 - 2026-07-15 Asia/Shanghai：咖啡和红茶的原型饮用时间统一缩短为 3 秒；订单状态机加入 `[CoffeeTime][OrderLoop]` 打点日志，以 `loop_id` 追踪从点单到清理空杯的完整循环。
 - 2026-07-15 Asia/Shanghai：Windows 实机日志确认连续两个订单循环均按六个事件完成；两次饮用计时均约 3 秒，清理空杯后可再次点单。核心单杯循环人工验证完成。
 - 2026-07-15 Asia/Shanghai：加入一名固定占位咖啡师、两名固定占位顾客和独立座位占用模块；顾客座位阻挡寻路，玩家座位具有保留优先级，且规则保证至少两个玩家可用座位。新增座位规则测试并更新布局测试，全部 headless 检查通过。
+- 2026-07-18 Asia/Shanghai：Windows 实机确认占位 NPC 显示正常，两名顾客占座交互正确，其余六个空座可正常使用；占位 NPC 与玩家优先座位规则验证完成，进入播放器接口与本地设置阶段。
 
 ## English
 
 ### Current snapshot
 
-- Phase: Windows validation of placeholder NPCs and seating rules for the first blockout prototype.
+- Phase: music-player interfaces and local settings for the first blockout prototype.
 - Completed: planning and asset strategy are locked; bilingual documentation, the Godot skeleton, blockout café, eight-direction click movement, the one-drink state machine, one placeholder barista, and two fixed placeholder customers are established. Seating rules make customer seats block pathfinding, prevent player claims, and preserve at least two player-accessible seats.
-- In progress: validate placeholder NPC rendering, occupied-seat feedback, and six free player seats on Windows; final window docking, sizing, and always-on-top behavior are deferred.
-- Next: confirm that the two customer seats cannot be selected while the other six green seats remain reachable; then proceed to the music interface and local settings.
+- In progress: design and implement the minimal music-player interface and local settings; final window docking, sizing, and always-on-top behavior remain deferred.
+- Next: establish the minimal data flow for music channels, playback state, and local settings. A test track may only be imported after its license is approved in `ASSETS.md`.
 - Blockers: Windows currently renders at 1280×720 and the always-on-top toggle does not work correctly. These window issues are deferred and do not block gameplay work. The shared environment cannot visually inspect desktop-window behavior.
-- Test status: Godot 4.7 editor import, a five-frame runtime smoke test, the order state-machine test, the seating-priority test, and the automated 1920×270 layout test pass. The layout test confirms two blocked customer seats and six free seats reachable from the entrance. Windows manual testing completed two consecutive drink loops; NPC visual validation remains pending.
+- Test status: Godot 4.7 editor import, a five-frame runtime smoke test, the order state-machine test, the seating-priority test, and the automated 1920×270 layout test pass. The layout test confirms two blocked customer seats and six free seats reachable from the entrance. Windows manual testing completed two consecutive drink loops and confirmed correct placeholder NPC rendering, two unavailable customer seats, and normal interaction with the other six free seats.
 - Passed check: `./tests/static_check.sh`; required files, `res://` references, and GDScript indentation are consistent.
 
 ### Verification commands
@@ -91,3 +92,4 @@ Common failures:
 - 2026-07-15 Asia/Shanghai: coffee and tea now use a three-second prototype consumption time. The order state machine prints `[CoffeeTime][OrderLoop]` markers with a shared `loop_id` from ordering through empty-cup cleanup.
 - 2026-07-15 Asia/Shanghai: Windows logs confirmed two consecutive six-event order loops. Both consumption timers lasted about three seconds, and another order succeeded after empty-cup cleanup. Manual validation of the core one-drink loop is complete.
 - 2026-07-15 Asia/Shanghai: added one fixed placeholder barista, two fixed placeholder customers, and an independent seat-occupancy module. Customer seats block pathfinding, player claims are preserved during reassignment, and at least two seats remain player-accessible. The new seating test and updated layout test pass with all headless checks.
+- 2026-07-18 Asia/Shanghai: Windows testing confirmed correct placeholder NPC rendering, correct interaction blocking for the two customer seats, and normal use of the other six free seats. Placeholder NPC and player-priority seating validation is complete; work advances to the music-player interface and local settings.
