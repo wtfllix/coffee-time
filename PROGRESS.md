@@ -52,6 +52,7 @@ godot4 --headless --path . --script tests/test_music_panel.gd
 - 2026-07-18 Asia/Shanghai：播放器面板已接入主场景，支持三个频道、播放/停止、音量和无曲目提示；频道与音量立即保存，播放状态不保存。五帧运行与 UI 自动化测试通过，等待 Windows 实机验证。
 - 2026-07-18 Asia/Shanghai：Windows 确认频道切换、频道与音量恢复、无曲目提示均正常且无红色错误。根据实机反馈，将常驻播放器条改为右下角按钮展开菜单，减少对咖啡店画面和交互的占用；自动化折叠菜单测试通过。
 - 2026-07-18 Asia/Shanghai：Windows 复验确认音乐按钮位置可接受、展开菜单完整、收起后不影响咖啡店交互且无红色错误；菜单与场景重叠暂按原型接受，正式垂直切片计划改用音乐图标和完整播放器 UI。观察到绿色信息提示，待取得原文后判断是否需要处理。
+- 2026-07-18 Asia/Shanghai：加入 MIT 许可的 Copy All Errors 1.0.0 编辑器插件，固定上游提交并保留许可证与来源记录；绿色 `[CopyAllErrors]` 输出确认为插件状态信息，不属于游戏错误。
 
 ## English
 
@@ -105,3 +106,4 @@ Common failures:
 - 2026-07-18 Asia/Shanghai: connected the player panel to the main scene with three channels, play/stop, volume, and missing-track feedback. Channel and volume save immediately while playback state does not persist. The five-frame run and UI automation pass; Windows validation remains pending.
 - 2026-07-18 Asia/Shanghai: Windows confirmed channel switching, restored channel and volume, and missing-track feedback without red errors. Based on playtest feedback, replaced the persistent player strip with a bottom-right button that expands the menu, reducing visual and interaction obstruction; the automated collapse/expand test passes.
 - 2026-07-18 Asia/Shanghai: Windows revalidation confirmed acceptable Music-button placement, complete expanded controls, normal café interaction after collapse, and no red errors. Menu overlap is accepted for the prototype; the vertical slice should use a music icon and a complete player UI. Green informational notices were observed and await exact text before triage.
+- 2026-07-18 Asia/Shanghai: added the MIT-licensed Copy All Errors 1.0.0 editor plugin, pinned its upstream commit, and retained its license and source records. Green `[CopyAllErrors]` output is confirmed as plugin status information rather than a game error.

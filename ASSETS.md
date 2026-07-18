@@ -21,6 +21,7 @@
 |---|---|---|---|---|---|---|
 | AST-000 | Approved | Prototype | 程序绘制色块 | Coffee Time project | 运行时生成 | 项目原创，不含外部素材 |
 | MUS-001 | Candidate | Music | 待用户提供的测试曲目 | 待填写 | `res://assets/music/` | 导入前需补齐许可证与凭证 |
+| DEV-001 | Approved | Editor plugin | Copy All Errors 1.0.0 | ShardSpace | `res://addons/copy_all_errors/` | MIT；来源：https://github.com/smartmita/godot-copy-all-errors；固定提交 `d8dd5bb29bba68d709435889c9c65c94f6fe7e7a`；仅编辑器使用，许可证原文随插件保留 |
 
 ### 候选来源说明
 
@@ -49,6 +50,7 @@ Every external asset records a unique ID, status, type, title, creator, source U
 |---|---|---|---|---|---|---|
 | AST-000 | Approved | Prototype | Programmatic colored shapes | Coffee Time project | Runtime generated | Original project work; no external asset |
 | MUS-001 | Candidate | Music | User-provided test track pending | Pending | `res://assets/music/` | License and receipt required before import |
+| DEV-001 | Approved | Editor plugin | Copy All Errors 1.0.0 | ShardSpace | `res://addons/copy_all_errors/` | MIT; source: https://github.com/smartmita/godot-copy-all-errors; pinned commit `d8dd5bb29bba68d709435889c9c65c94f6fe7e7a`; editor-only, with the license text retained in the plugin directory |
 
 ### Candidate source notes
 

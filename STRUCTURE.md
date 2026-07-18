@@ -27,6 +27,8 @@ coffee-time/
 ├── DECISIONS.md            # 决策记录
 ├── ASSETS.md               # 素材授权台账
 ├── project.godot           # Godot 项目入口配置
+├── addons/
+│   └── copy_all_errors/    # 编辑器错误/警告复制工具（MIT）
 ├── scenes/
 │   └── main.tscn           # 主场景
 ├── scripts/
@@ -92,6 +94,8 @@ project.godot
 `local_settings.gd` 使用 `ConfigFile` 在 `user://settings.cfg` 保存频道与音量。播放状态不会保存，确保每次启动仍由用户主动开始播放。
 
 `music_panel.gd` 默认只显示右下角“音乐”按钮，点击后向上展开频道、播放/停止、音量和曲目可用提示。透明根控件不拦截咖啡店点击；用户操作由 `main.gd` 转给音乐控制器，并在频道或音量变化后立即保存设置。
+
+`addons/copy_all_errors/` 是仅在 Godot 编辑器运行的 MIT 插件，在调试器错误面板加入“复制全部”按钮。它不进入咖啡店运行时调用链；来源、固定提交和许可证记录在 `ASSETS.md` 与插件目录的 `README.md`。
 
 ### 点击移动调用链
 
@@ -159,6 +163,7 @@ coffee-time/
 ├── DECISIONS.md
 ├── ASSETS.md
 ├── project.godot
+├── addons/copy_all_errors/ # MIT editor utility for copying debugger messages
 ├── scenes/main.tscn
 ├── scripts/
 │   ├── core/main.gd
@@ -217,6 +222,8 @@ project.godot
 `local_settings.gd` uses `ConfigFile` to store channel and volume in `user://settings.cfg`. Playback state is deliberately not persisted, so each session still requires an explicit user action to start music.
 
 `music_panel.gd` initially shows only a bottom-right Music button, which expands the channel, play/stop, volume, and track-availability controls upward. Its transparent root does not intercept café clicks. `main.gd` forwards user actions to the music controller and saves settings immediately after channel or volume changes.
+
+`addons/copy_all_errors/` is an MIT-licensed editor-only plugin that adds a Copy All button to the Debugger Errors panel. It is outside the café runtime call chain; `ASSETS.md` and the plugin-local `README.md` record its source, pinned commit, and license.
 
 ### Click-movement call chain
 

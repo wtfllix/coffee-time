@@ -42,6 +42,10 @@ godot4 --path . --editor
 
 测试饮品时，在 Godot 的 **输出** 面板搜索 `[CoffeeTime][OrderLoop]`。同一杯饮品的日志使用相同 `loop_id`，正常顺序为 `order_placed`、`preparation_completed`、`drink_picked_up`、`drinking_started`、`drinking_completed`、`loop_completed`。最后一个事件表示空杯已经清理，可以再次点单。
 
+### 复制调试信息
+
+仓库包含 MIT 许可的 **Copy All Errors** 编辑器插件。首次使用时打开“项目 → 项目设置 → 插件”并启用它；之后可在“调试器 → 错误”面板点击“复制全部”。插件打印的绿色 `[CopyAllErrors]` 消息是普通状态信息，不是游戏错误。
+
 ### 初学者阅读路线
 
 先阅读 [`STRUCTURE.md`](STRUCTURE.md)，再按其中顺序打开三个脚本。代码标识符使用英文，中文注释解释职责、原因、单位和信号流。
@@ -87,6 +91,10 @@ The bottom-right Music button expands or collapses the player menu. The menu sel
 ### Order-loop markers
 
 While testing a drink, search for `[CoffeeTime][OrderLoop]` in Godot's **Output** panel. One drink keeps the same `loop_id`. The expected sequence is `order_placed`, `preparation_completed`, `drink_picked_up`, `drinking_started`, `drinking_completed`, and `loop_completed`. The final event means the empty cup was dismissed and another order can be placed.
+
+### Copying debugger messages
+
+The repository includes the MIT-licensed **Copy All Errors** editor plugin. Enable it once under Project → Project Settings → Plugins, then use Copy All in Debugger → Errors. Green `[CopyAllErrors]` lines are ordinary plugin status messages, not game errors.
 
 ### Beginner reading path
 
