@@ -12,11 +12,17 @@ extends Node
 ## - res://scripts/ui/prototype_toolbar.gd
 ## - res://scripts/orders/order_controller.gd
 ## - res://scripts/ui/order_panel.gd
+## - res://scripts/audio/music_controller.gd
+## - res://scripts/persistence/local_settings.gd
+## - res://scripts/ui/music_panel.gd
 
 const CafePrototype := preload("res://scripts/cafe/cafe_prototype.gd")
 const PrototypeToolbar := preload("res://scripts/ui/prototype_toolbar.gd")
 const OrderControllerScript := preload("res://scripts/orders/order_controller.gd")
 const OrderPanelScript := preload("res://scripts/ui/order_panel.gd")
+const MusicControllerScript := preload("res://scripts/audio/music_controller.gd")
+const LocalSettingsScript := preload("res://scripts/persistence/local_settings.gd")
+const MusicPanelScript := preload("res://scripts/ui/music_panel.gd")
 const CoffeeDrink: DrinkDefinition = preload("res://data/drinks/coffee.tres")
 const TeaDrink: DrinkDefinition = preload("res://data/drinks/tea.tres")
 
@@ -28,6 +34,9 @@ var cafe: Control
 var toolbar: Control
 var order_controller: OrderController
 var order_panel: OrderPanel
+var music_controller: Node
+var local_settings: RefCounted
+var music_panel: Control
 var running_embedded: bool = false
 
 
@@ -67,6 +76,18 @@ func _build_prototype() -> void:
 	order_controller.name = "OrderController"
 	add_child(order_controller)
 
+	music_controller = MusicControllerScript.new()
+	music_controller.name = "MusicController"
+	add_child(music_controller)
+	local_settings = LocalSettingsScript.new()
+	var saved_music_settings: Dictionary = local_settings.load_music_settings(
+		MusicControllerScript.DEFAULT_CHANNEL_ID,
+		MusicControllerScript.DEFAULT_VOLUME,
+		MusicControllerScript.CHANNEL_IDS
+	)
+	music_controller.select_channel(saved_music_settings["channel_id"])
+	music_controller.set_volume(saved_music_settings["volume"])
+
 	cafe = CafePrototype.new()
 	cafe.name = "CafePrototype"
 	add_child(cafe)
@@ -92,6 +113,21 @@ func _build_prototype() -> void:
 	var available_drinks: Array[DrinkDefinition] = [CoffeeDrink, TeaDrink]
 	order_panel.configure(available_drinks)
 
+	music_panel = MusicPanelScript.new()
+	music_panel.name = "MusicPanel"
+	add_child(music_panel)
+	music_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	music_panel.offset_left = -610.0
+	music_panel.offset_top = -56.0
+	music_panel.offset_right = -12.0
+	music_panel.offset_bottom = -12.0
+	music_panel.configure(
+		music_controller.current_channel_id,
+		music_controller.volume,
+		false,
+		music_controller.has_playable_tracks()
+	)
+
 	cafe.status_changed.connect(toolbar.set_status)
 	cafe.interaction_requested.connect(_on_cafe_interaction_requested)
 	toolbar.always_on_top_changed.connect(_on_always_on_top_changed)
@@ -99,6 +135,11 @@ func _build_prototype() -> void:
 	order_controller.state_changed.connect(_on_order_state_changed)
 	order_panel.drink_selected.connect(_on_drink_selected)
 	order_panel.cancelled.connect(_on_order_cancelled)
+	music_panel.channel_selected.connect(_on_music_channel_selected)
+	music_panel.play_requested.connect(_on_music_play_requested)
+	music_panel.stop_requested.connect(_on_music_stop_requested)
+	music_panel.volume_changed.connect(_on_music_volume_changed)
+	music_controller.playback_changed.connect(music_panel.set_playing)
 	cafe.set_order_state(order_controller.get_state_name())
 
 	if running_embedded:
@@ -164,3 +205,40 @@ func _on_order_cancelled() -> void:
 func _on_order_state_changed(state_name: StringName, message: String) -> void:
 	cafe.set_order_state(state_name)
 	toolbar.set_status(message)
+
+
+## 接收方：res://scripts/ui/music_panel.gd；切换后立即保存频道设置。
+func _on_music_channel_selected(channel_id: StringName) -> void:
+	if not music_controller.select_channel(channel_id):
+		toolbar.set_status(tr("无法识别这个音乐频道"))
+		return
+	music_panel.set_track_availability(music_controller.has_playable_tracks())
+	_save_music_settings()
+
+
+## 接收方：res://scripts/ui/music_panel.gd；每次启动都必须由用户主动触发。
+func _on_music_play_requested() -> void:
+	if music_controller.request_play():
+		toolbar.set_status(tr("音乐已开始播放"))
+	else:
+		toolbar.set_status(tr("当前频道还没有已批准的音乐"))
+
+
+func _on_music_stop_requested() -> void:
+	music_controller.stop()
+	toolbar.set_status(tr("音乐已停止"))
+
+
+## 接收方：res://scripts/ui/music_panel.gd；音量范围为 0.0–1.0。
+func _on_music_volume_changed(volume: float) -> void:
+	music_controller.set_volume(volume)
+	_save_music_settings()
+
+
+func _save_music_settings() -> void:
+	var save_error: Error = local_settings.save_music_settings(
+		music_controller.current_channel_id,
+		music_controller.volume
+	)
+	if save_error != OK:
+		toolbar.set_status(tr("本地音乐设置保存失败，错误码：%d") % save_error)

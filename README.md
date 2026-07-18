@@ -28,6 +28,8 @@ godot4 --path . --editor
 
 预期结果：屏幕底部、任务栏上方出现一个不透明咖啡店横条。店内显示一名占位咖啡师和两名占座顾客；点击可行走地面时，蓝绿色占位角色会绕开柜台、桌子和顾客移动。
 
+右下角“音乐”按钮可展开或收起播放器菜单。菜单可切换安静钢琴、柔和爵士和温暖木吉他频道，并调整音量。当前没有已批准曲目，点击“播放”只会显示提示，不会报错或播放候选素材。频道和音量会保存，应用重启后仍需主动点击播放。
+
 ### 常见问题
 
 - 找不到 `godot4`：确认安装目录已加入系统 `PATH`，或直接通过 Godot Project Manager 导入。
@@ -71,6 +73,8 @@ godot4 --path . --editor
 ```
 
 Expected: an opaque café strip appears above the taskbar with one placeholder barista and two seated customers. Clicking walkable floor moves the teal placeholder player around counters, tables, and customers.
+
+The bottom-right Music button expands or collapses the player menu. The menu selects quiet piano, soft jazz, or warm acoustic channels and adjusts volume. No tracks are approved yet, so Play only shows a clear message without an error or candidate audio. Channel and volume persist, while every new session still requires an explicit Play action.
 
 ### Common issues
 

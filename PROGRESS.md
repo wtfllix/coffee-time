@@ -6,10 +6,10 @@
 
 - 当前阶段：第一轮色块原型的播放器接口与本地设置。
 - 已完成：策划主体与素材策略已锁定；双语文档、Godot 工程骨架、色块咖啡店、八向点击移动、单杯订单状态机、一名占位咖啡师和两名固定占位顾客已建立。座位规则保证顾客座位阻挡寻路、玩家不能占用，并至少保留两个玩家可用座位。
-- 进行中：最小音乐控制器与本地音乐设置已建立，等待接入主场景和播放器 UI；最终窗口停靠、尺寸和置顶行为延后处理。
-- 下一步：将频道选择、播放/停止和音量控件接入主场景；测试曲目仍须在 `ASSETS.md` 完成授权批准后才能导入。
+- 进行中：播放器接口、本地设置和折叠菜单 Windows 验证完成；准备检查绿色信息提示并建立原型性能基线。最终窗口停靠、尺寸和置顶行为延后处理。
+- 下一步：确认绿色提示是否只是普通运行信息，完成性能检查后规划从色块原型进入可呈现氛围的垂直切片；有已批准曲目后再验证重启不自动播放。
 - 阻塞：Windows 实机观察到当前渲染为 1280×720，置顶开关不正常；这些窗口问题已决定延期，不阻塞当前游戏逻辑开发。共享环境无法直接完成桌面窗口视觉检查。
-- 测试状态：Godot 4.7 项目解析、订单状态机、座位优先规则、1920×270 自动布局、音乐状态与本地设置测试通过；布局测试确认两名顾客阻挡其座位、六个空座从入口可达。Windows 已人工验证连续两次完整饮品循环、占位 NPC 正常显示、两名顾客占座不可入座且其余六个空座交互正常。
+- 测试状态：Godot 4.7 五帧主场景运行、订单状态机、座位优先规则、1920×270 自动布局、音乐状态与本地设置、播放器折叠菜单 UI 测试通过。Windows 已确认三个频道、频道切换、音量与频道恢复、无曲目提示、无红色错误、折叠菜单布局可接受且收起后不影响移动、点单和座位交互；重启不自动播放待有批准曲目后验证。实机观察到多条绿色信息提示，原文待收集。
 - 已通过检查：`./tests/static_check.sh`；必需文件、`res://` 文件引用和 GDScript 缩进一致。
 
 ### 验证命令
@@ -23,6 +23,7 @@ godot4 --headless --path . --script tests/test_order_controller.gd
 godot4 --headless --path . --script tests/test_cafe_layout.gd
 godot4 --headless --path . --script tests/test_seat_occupancy.gd
 godot4 --headless --path . --script tests/test_music_controller.gd
+godot4 --headless --path . --script tests/test_music_panel.gd
 ```
 
 预期结果：第一条输出 4.7.x；第二条打开编辑器并导入项目；第三条无解析错误退出。
@@ -48,6 +49,9 @@ godot4 --headless --path . --script tests/test_music_controller.gd
 - 2026-07-15 Asia/Shanghai：加入一名固定占位咖啡师、两名固定占位顾客和独立座位占用模块；顾客座位阻挡寻路，玩家座位具有保留优先级，且规则保证至少两个玩家可用座位。新增座位规则测试并更新布局测试，全部 headless 检查通过。
 - 2026-07-18 Asia/Shanghai：Windows 实机确认占位 NPC 显示正常，两名顾客占座交互正确，其余六个空座可正常使用；占位 NPC 与玩家优先座位规则验证完成，进入播放器接口与本地设置阶段。
 - 2026-07-18 Asia/Shanghai：新增独立音乐控制器与 `ConfigFile` 本地设置读写，支持三个稳定频道 ID、0.0–1.0 音量、主动播放语义和无授权曲目时的安全拒绝；无窗口自动化测试通过，尚未接入主场景 UI。
+- 2026-07-18 Asia/Shanghai：播放器面板已接入主场景，支持三个频道、播放/停止、音量和无曲目提示；频道与音量立即保存，播放状态不保存。五帧运行与 UI 自动化测试通过，等待 Windows 实机验证。
+- 2026-07-18 Asia/Shanghai：Windows 确认频道切换、频道与音量恢复、无曲目提示均正常且无红色错误。根据实机反馈，将常驻播放器条改为右下角按钮展开菜单，减少对咖啡店画面和交互的占用；自动化折叠菜单测试通过。
+- 2026-07-18 Asia/Shanghai：Windows 复验确认音乐按钮位置可接受、展开菜单完整、收起后不影响咖啡店交互且无红色错误；菜单与场景重叠暂按原型接受，正式垂直切片计划改用音乐图标和完整播放器 UI。观察到绿色信息提示，待取得原文后判断是否需要处理。
 
 ## English
 
@@ -55,10 +59,10 @@ godot4 --headless --path . --script tests/test_music_controller.gd
 
 - Phase: music-player interfaces and local settings for the first blockout prototype.
 - Completed: planning and asset strategy are locked; bilingual documentation, the Godot skeleton, blockout café, eight-direction click movement, the one-drink state machine, one placeholder barista, and two fixed placeholder customers are established. Seating rules make customer seats block pathfinding, prevent player claims, and preserve at least two player-accessible seats.
-- In progress: the minimal music controller and local music settings are implemented and await main-scene and player-UI integration; final window docking, sizing, and always-on-top behavior remain deferred.
-- Next: connect channel selection, play/stop, and volume controls to the main scene. A test track may only be imported after its license is approved in `ASSETS.md`.
+- In progress: Windows validation of the player interface, local settings, and collapsible menu is complete. Next, review the green informational notices and establish a prototype performance baseline. Final window docking, sizing, and always-on-top behavior remain deferred.
+- Next: confirm whether the green notices are ordinary runtime information, complete performance checks, then plan the transition from blockout prototype to an atmospheric vertical slice. Verify no automatic playback after restart once an approved track exists.
 - Blockers: Windows currently renders at 1280×720 and the always-on-top toggle does not work correctly. These window issues are deferred and do not block gameplay work. The shared environment cannot visually inspect desktop-window behavior.
-- Test status: Godot 4.7 project parsing, the order state-machine test, seating-priority test, automated 1920×270 layout test, and music-state/local-settings test pass. The layout test confirms two blocked customer seats and six free seats reachable from the entrance. Windows manual testing completed two consecutive drink loops and confirmed correct placeholder NPC rendering, two unavailable customer seats, and normal interaction with the other six free seats.
+- Test status: the Godot 4.7 five-frame main-scene run, order state-machine test, seating-priority test, automated 1920×270 layout test, music-state/local-settings test, and collapsible player-UI test pass. Windows confirmed all three channels, channel switching, restored channel and volume, missing-track feedback, no red errors, acceptable menu layout, and normal movement, ordering, and seating after collapse. No-auto-play awaits an approved track. Several green informational notices were observed; their text is pending collection.
 - Passed check: `./tests/static_check.sh`; required files, `res://` references, and GDScript indentation are consistent.
 
 ### Verification commands
@@ -72,6 +76,7 @@ godot4 --headless --path . --script tests/test_order_controller.gd
 godot4 --headless --path . --script tests/test_cafe_layout.gd
 godot4 --headless --path . --script tests/test_seat_occupancy.gd
 godot4 --headless --path . --script tests/test_music_controller.gd
+godot4 --headless --path . --script tests/test_music_panel.gd
 ```
 
 Expected: the first command reports 4.7.x, the second imports and opens the project, and the third exits without parse errors.
@@ -97,3 +102,6 @@ Common failures:
 - 2026-07-15 Asia/Shanghai: added one fixed placeholder barista, two fixed placeholder customers, and an independent seat-occupancy module. Customer seats block pathfinding, player claims are preserved during reassignment, and at least two seats remain player-accessible. The new seating test and updated layout test pass with all headless checks.
 - 2026-07-18 Asia/Shanghai: Windows testing confirmed correct placeholder NPC rendering, correct interaction blocking for the two customer seats, and normal use of the other six free seats. Placeholder NPC and player-priority seating validation is complete; work advances to the music-player interface and local settings.
 - 2026-07-18 Asia/Shanghai: added an independent music controller and `ConfigFile`-based local settings with three stable channel IDs, 0.0–1.0 volume, explicit playback semantics, and safe rejection when no approved tracks exist. The headless automated test passes; main-scene UI integration remains pending.
+- 2026-07-18 Asia/Shanghai: connected the player panel to the main scene with three channels, play/stop, volume, and missing-track feedback. Channel and volume save immediately while playback state does not persist. The five-frame run and UI automation pass; Windows validation remains pending.
+- 2026-07-18 Asia/Shanghai: Windows confirmed channel switching, restored channel and volume, and missing-track feedback without red errors. Based on playtest feedback, replaced the persistent player strip with a bottom-right button that expands the menu, reducing visual and interaction obstruction; the automated collapse/expand test passes.
+- 2026-07-18 Asia/Shanghai: Windows revalidation confirmed acceptable Music-button placement, complete expanded controls, normal café interaction after collapse, and no red errors. Menu overlap is accepted for the prototype; the vertical slice should use a music icon and a complete player UI. Green informational notices were observed and await exact text before triage.

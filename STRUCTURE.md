@@ -14,6 +14,7 @@
 8. [`scripts/ui/order_panel.gd`](scripts/ui/order_panel.gd)：饮品选择界面。
 9. [`scripts/audio/music_controller.gd`](scripts/audio/music_controller.gd)：频道、音量与播放状态。
 10. [`scripts/persistence/local_settings.gd`](scripts/persistence/local_settings.gd)：本地音乐设置读写。
+11. [`scripts/ui/music_panel.gd`](scripts/ui/music_panel.gd)：频道、播放与音量控件。
 
 ### 当前目录
 
@@ -44,7 +45,8 @@ coffee-time/
 │   │   └── order_controller.gd # 一次一杯状态机
 │   └── ui/
 │       ├── prototype_toolbar.gd # 原型工具栏
-│       └── order_panel.gd       # 点单面板
+│       ├── order_panel.gd       # 点单面板
+│       └── music_panel.gd       # 音乐播放器面板
 ├── data/
 │   └── drinks/             # 咖啡与红茶测试配置
 ├── assets/
@@ -55,7 +57,8 @@ coffee-time/
     ├── test_order_controller.gd # 单杯状态机测试
     ├── test_cafe_layout.gd      # 1920×270 宽度与座位可达性测试
     ├── test_seat_occupancy.gd   # 玩家优先与最少空座测试
-    └── test_music_controller.gd # 音乐状态与本地设置测试
+    ├── test_music_controller.gd # 音乐状态与本地设置测试
+    └── test_music_panel.gd      # 播放器 UI 信号与显示测试
 ```
 
 ### 当前运行关系
@@ -69,6 +72,9 @@ project.godot
           -> scripts/ui/prototype_toolbar.gd
           -> scripts/ui/order_panel.gd
           -> scripts/orders/order_controller.gd
+          -> scripts/ui/music_panel.gd
+          -> scripts/audio/music_controller.gd
+          -> scripts/persistence/local_settings.gd
 ```
 
 `main.gd` 读取当前显示器的可用矩形，将窗口调整为全宽、25% 高，并贴到任务栏上方。它创建色块咖啡店和原型工具栏。
@@ -81,9 +87,11 @@ project.godot
 
 `order_controller.gd` 是与画面解耦的单杯状态机。`main.gd` 将咖啡店空间交互转为状态机操作，并把状态变化再传给工具栏和场景。每次状态切换还会输出以 `[CoffeeTime][OrderLoop]` 开头的结构化打点日志；同一杯饮品共享 `loop_id`，`event=loop_completed` 表示空杯已清理并恢复为可点单状态。
 
-`music_controller.gd` 管理三个稳定频道 ID、线性音量、播放意图和各频道的 `AudioStream` 曲目池。当前尚未连接主场景，也没有导入候选音乐；频道没有已批准曲目时，播放请求会安全返回 `false`。
+`music_controller.gd` 管理三个稳定频道 ID、线性音量、播放意图和各频道的 `AudioStream` 曲目池。`main.gd` 将其连接到 `music_panel.gd`；当前没有导入候选音乐，频道没有已批准曲目时，播放请求会安全返回 `false` 并在工具栏显示说明。
 
 `local_settings.gd` 使用 `ConfigFile` 在 `user://settings.cfg` 保存频道与音量。播放状态不会保存，确保每次启动仍由用户主动开始播放。
+
+`music_panel.gd` 默认只显示右下角“音乐”按钮，点击后向上展开频道、播放/停止、音量和曲目可用提示。透明根控件不拦截咖啡店点击；用户操作由 `main.gd` 转给音乐控制器，并在频道或音量变化后立即保存设置。
 
 ### 点击移动调用链
 
@@ -108,7 +116,6 @@ project.godot
 以下结构尚未实现，不得当作现有代码：
 
 - `scripts/actors/` 中咖啡师、顾客和玩家的动态行为状态机；当前只实现了座位占用规则。
-- 播放器 UI 与 `main.gd` 装配；当前音乐控制器和本地音乐设置已实现但尚未接入画面。
 - 窗口设置持久化；当前只实现音乐频道和音量设置。
 - `data/tracks/` 与 `data/actors/`：曲目和角色配置资源。
 
@@ -120,6 +127,7 @@ godot4 --headless --path . --quit
 godot4 --headless --path . --script tests/test_cafe_layout.gd
 godot4 --headless --path . --script tests/test_seat_occupancy.gd
 godot4 --headless --path . --script tests/test_music_controller.gd
+godot4 --headless --path . --script tests/test_music_panel.gd
 ```
 
 第一条检查必需文件、`res://` 文件引用和 GDScript 缩进；第二条才是权威的 Godot 解析检查。
@@ -138,6 +146,7 @@ godot4 --headless --path . --script tests/test_music_controller.gd
 8. [`scripts/ui/order_panel.gd`](scripts/ui/order_panel.gd): drink selection UI.
 9. [`scripts/audio/music_controller.gd`](scripts/audio/music_controller.gd): channels, volume, and playback state.
 10. [`scripts/persistence/local_settings.gd`](scripts/persistence/local_settings.gd): local music-settings storage.
+11. [`scripts/ui/music_panel.gd`](scripts/ui/music_panel.gd): channel, playback, and volume controls.
 
 ### Current directory tree
 
@@ -162,7 +171,8 @@ coffee-time/
 │   │   └── order_controller.gd
 │   └── ui/
 │       ├── prototype_toolbar.gd
-│       └── order_panel.gd
+│       ├── order_panel.gd
+│       └── music_panel.gd
 ├── data/drinks/
 ├── assets/
 │   ├── music/
@@ -172,7 +182,8 @@ coffee-time/
     ├── test_order_controller.gd
     ├── test_cafe_layout.gd
     ├── test_seat_occupancy.gd
-    └── test_music_controller.gd
+    ├── test_music_controller.gd
+    └── test_music_panel.gd
 ```
 
 ### Current runtime relationships
@@ -186,6 +197,9 @@ project.godot
           -> scripts/ui/prototype_toolbar.gd
           -> scripts/ui/order_panel.gd
           -> scripts/orders/order_controller.gd
+          -> scripts/ui/music_panel.gd
+          -> scripts/audio/music_controller.gd
+          -> scripts/persistence/local_settings.gd
 ```
 
 `main.gd` reads the current monitor's usable rectangle, makes the window full-width and 25% high, and docks it above the taskbar. It assembles the blockout café and prototype toolbar.
@@ -198,9 +212,11 @@ project.godot
 
 `order_controller.gd` is a view-independent one-drink state machine. `main.gd` converts spatial interactions into state-machine operations and reflects state changes back into the café and toolbar. Every transition also prints a structured marker prefixed with `[CoffeeTime][OrderLoop]`; one drink shares a `loop_id`, and `event=loop_completed` means the empty cup was dismissed and ordering is available again.
 
-`music_controller.gd` manages three stable channel IDs, linear volume, playback intent, and per-channel `AudioStream` pools. It is not connected to the main scene yet and no candidate music has been imported. A playback request safely returns `false` when the selected channel has no approved tracks.
+`music_controller.gd` manages three stable channel IDs, linear volume, playback intent, and per-channel `AudioStream` pools. `main.gd` connects it to `music_panel.gd`. No candidate music has been imported; a playback request safely returns `false` when the selected channel has no approved tracks and the toolbar explains why.
 
 `local_settings.gd` uses `ConfigFile` to store channel and volume in `user://settings.cfg`. Playback state is deliberately not persisted, so each session still requires an explicit user action to start music.
+
+`music_panel.gd` initially shows only a bottom-right Music button, which expands the channel, play/stop, volume, and track-availability controls upward. Its transparent root does not intercept café clicks. `main.gd` forwards user actions to the music controller and saves settings immediately after channel or volume changes.
 
 ### Click-movement call chain
 
@@ -225,7 +241,6 @@ project.godot
 These do not exist yet and must not be described as implemented:
 
 - Dynamic player, barista, and customer behavior state machines under `scripts/actors/`; only seat occupancy is implemented now.
-- Player UI and `main.gd` assembly; the music controller and local music settings exist but are not connected to the view yet.
 - Window-setting persistence; only music channel and volume settings exist now.
 - `data/tracks/` and `data/actors/`: track and actor resources.
 
@@ -237,6 +252,7 @@ godot4 --headless --path . --quit
 godot4 --headless --path . --script tests/test_cafe_layout.gd
 godot4 --headless --path . --script tests/test_seat_occupancy.gd
 godot4 --headless --path . --script tests/test_music_controller.gd
+godot4 --headless --path . --script tests/test_music_panel.gd
 ```
 
 The first command checks required files, `res://` file references, and GDScript indentation. The second is the authoritative Godot parse check.
