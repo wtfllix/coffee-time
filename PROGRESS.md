@@ -1,5 +1,13 @@
 # Coffee Time Progress / Coffee Time 进度
 
+## 2026-07-19 温暖木屋结构层试制
+
+- 基于已确认的 CON-005 布局风格生成墙板、地板、墙脚、立柱、入口门和空窗框六件结构候选；洋红源图、透明图集和六张最近邻缩放拆件均保存在 `res://assets/candidates/warm_cabin/`。
+- 使用 Pillow 12.3.0 去背；透明图集四角 alpha 均为 0，整体 alpha 范围为 0–255。窗框中心保持透明，缺省晴天外景可独立绘制在窗框后方。
+- 新增 `res://scenes/art_tests/warm_cabin_structure_preview.tscn`，按 1280×270 重复铺设墙板和地板，并叠加墙脚、门、两扇窗与立柱。预览故意不隐藏拼接线，用于判断 AI 生成纹理是否具备正式平铺条件。
+- Godot 4.7.1 已完成八张 PNG 的 headless 编辑器导入；共享环境因禁止本地 TCP 监听输出编辑器诊断错误，但导入步骤完成。随后独立预览场景五帧运行与静态资源引用/缩进检查均通过。
+- CON-006 仍为 `Candidate`，当前不得替换主场景。下一步先完成 Godot 导入和 Windows 视觉检查；若重复边缘明显，则保留风格而重制确定性平铺纹理，不继续用插画式拉伸掩盖问题。
+
 ## 2026-07-19 温暖木屋分层布局灰盒
 
 - 新增隔离场景 `res://scenes/art_tests/warm_cabin_layout_blockout.tscn` 与绘制脚本 `res://scripts/art_tests/warm_cabin_layout_blockout.gd`，不替换当前主场景。

@@ -38,7 +38,8 @@ coffee-time/
 │   │   └── main.gd         # 桌面窗口和顶层装配
 │   ├── art_tests/
 │   │   ├── frontal_oblique_blockout.gd # DEC-013 投影与比例灰盒
-│   │   └── warm_cabin_layout_blockout.gd # DEC-014 功能分区与角色尺度灰盒
+│   │   ├── warm_cabin_layout_blockout.gd # DEC-014 功能分区与角色尺度灰盒
+│   │   └── warm_cabin_structure_preview.gd # CON-006 结构层重复铺设预览
 │   ├── cafe/
 │   │   └── cafe_prototype.gd # 色块咖啡店与点击移动
 │   ├── actors/
