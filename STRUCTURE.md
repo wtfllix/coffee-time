@@ -26,14 +26,18 @@ coffee-time/
 ├── STRUCTURE.md            # 本文件：结构与数据流
 ├── DECISIONS.md            # 决策记录
 ├── ASSETS.md               # 素材授权台账
+├── ART_DIRECTION.md        # 当前垂直切片的美术与氛围规范
 ├── project.godot           # Godot 项目入口配置
 ├── addons/
 │   └── copy_all_errors/    # 编辑器错误/警告复制工具（MIT）
 ├── scenes/
-│   └── main.tscn           # 主场景
+│   ├── main.tscn           # 主场景
+│   └── art_tests/          # Candidate 单件素材与氛围组合的隔离评估场景
 ├── scripts/
 │   ├── core/
 │   │   └── main.gd         # 桌面窗口和顶层装配
+│   ├── art_tests/
+│   │   └── frontal_oblique_blockout.gd # DEC-013 投影与比例灰盒
 │   ├── cafe/
 │   │   └── cafe_prototype.gd # 色块咖啡店与点击移动
 │   ├── actors/
@@ -52,6 +56,8 @@ coffee-time/
 ├── data/
 │   └── drinks/             # 咖啡与红茶测试配置
 ├── assets/
+│   ├── candidates/         # 已去背但尚未批准的游戏素材试制品
+│   ├── concepts/           # Candidate 概念参考，不进入正式构建
 │   ├── music/              # 已批准的本地音乐
 │   └── placeholder/        # 原型占位素材
 └── tests/                  # 自动化与静态检查
@@ -79,9 +85,9 @@ project.godot
           -> scripts/persistence/local_settings.gd
 ```
 
-`main.gd` 读取当前显示器的可用矩形，将窗口调整为全宽、25% 高，并贴到任务栏上方。它创建色块咖啡店和原型工具栏。
+`main.gd` 读取当前显示器的可用矩形，将窗口调整为全宽、25% 高，并贴到任务栏上方。它创建色块咖啡店和原型工具栏。启动和置顶切换后会输出一条 `[CoffeeTime][Window]` 结构化日志，记录嵌入状态、可用矩形和实际窗口状态，供 Windows 实机诊断。
 
-`cafe_prototype.gd` 将可行走区域离散为 32 像素网格。鼠标点击地面后，脚本计算八方向网格路径，并让占位玩家沿路径移动。柜台、桌子和两名占位顾客不可通行；六个绿色空座保持可达。场景同时程序绘制一名固定咖啡师。
+`cafe_prototype.gd` 将可行走区域离散为 32 像素网格。鼠标点击地面后，脚本计算八方向网格路径，并让占位玩家沿路径移动。CON-003 因视角错误已从运行时撤下，当前恢复程序色块房间与家具；柜台、桌子和两名占位顾客不可通行，六个空座保持可达。正式视觉将依据 DEC-013 的投影、CON-004 的气质和 CON-005 的空间分区重制。
 
 `seat_occupancy.gd` 独立记录顾客与玩家座位。顾客重新分配时跳过玩家已选座位，并限制顾客数量，使玩家始终至少有两个可用座位。
 
@@ -162,11 +168,17 @@ coffee-time/
 ├── STRUCTURE.md
 ├── DECISIONS.md
 ├── ASSETS.md
+├── ART_DIRECTION.md
 ├── project.godot
 ├── addons/copy_all_errors/ # MIT editor utility for copying debugger messages
 ├── scenes/main.tscn
+├── scenes/art_tests/warm_cabin_asset_preview.tscn
+├── scenes/art_tests/warm_cabin_atmosphere_preview.tscn
+├── scenes/art_tests/warm_cabin_integrated_preview.tscn
+├── scenes/art_tests/frontal_oblique_blockout.tscn
 ├── scripts/
 │   ├── core/main.gd
+│   ├── art_tests/frontal_oblique_blockout.gd
 │   ├── cafe/cafe_prototype.gd
 │   ├── actors/seat_occupancy.gd
 │   ├── audio/music_controller.gd
@@ -180,6 +192,8 @@ coffee-time/
 │       └── music_panel.gd
 ├── data/drinks/
 ├── assets/
+│   ├── candidates/
+│   ├── concepts/
 │   ├── music/
 │   └── placeholder/
 └── tests/
@@ -207,7 +221,7 @@ project.godot
           -> scripts/persistence/local_settings.gd
 ```
 
-`main.gd` reads the current monitor's usable rectangle, makes the window full-width and 25% high, and docks it above the taskbar. It assembles the blockout café and prototype toolbar.
+`main.gd` reads the current monitor's usable rectangle, makes the window full-width and 25% high, and docks it above the taskbar. It assembles the blockout café and prototype toolbar. Startup and topmost changes print one structured `[CoffeeTime][Window]` marker with embedded state, usable rectangle, and actual window state for Windows diagnostics.
 
 `cafe_prototype.gd` divides the walkable area into a 32-pixel grid. A floor click produces an eight-direction grid path that the placeholder player follows. Counters, tables, and two placeholder customers are solid, while six green free seats remain reachable. The scene also draws one fixed placeholder barista.
 

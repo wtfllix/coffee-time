@@ -70,9 +70,37 @@
 ### DEC-010 — 核心游戏体验优先于最终窗口行为
 
 - 日期：2026-07-15
-- 状态：Accepted
+- 状态：Superseded by DEC-011
 - 决策：保留底部桌面窗口作为产品目标，但暂缓处理最终渲染尺寸、停靠与置顶异常；先完成饮品循环、占位 NPC 和玩家优先规则。
 - 影响：当前 1280×720 渲染与置顶开关异常被记录为延期问题，不阻塞核心游戏逻辑开发；核心体验稳定后必须恢复 Windows 实机验证。
+
+### DEC-011 — 垂直切片优先于发布级窗口打磨
+
+- 日期：2026-07-19
+- 状态：Accepted
+- 决策：当前窗口原型足以支持内容开发；先制作能够呈现目标氛围的单人垂直切片，再处理最终尺寸、停靠和置顶的发布级稳定性。
+- 影响：1280×720 与置顶异常继续记录但不阻塞内容制作。采购或导入的场景、角色、UI 与音乐仍必须先在 `ASSETS.md` 完成批准；垂直切片完成后必须恢复窗口验证，不得把窗口目标取消。
+
+### DEC-012 — 美术、氛围与音乐优先于玩法
+
+- 日期：2026-07-19
+- 状态：Accepted
+- 决策：Coffee Time 是陪伴型应用，不以玩法深度或循环效率为优先。美术空间、音乐、角色存在感和低打扰体验构成主要产品价值；点单等玩法只用于建立轻微联系。
+- 影响：垂直切片先通过静置陪伴测试，再评估交互完整性。新增玩法不能以牺牲画面安静度、音乐连续性或用户工作注意力为代价；内容排期优先场景美术、代表音乐和环境角色动画。
+
+### DEC-013 — 正面轴向低机位俯视视角
+
+- 日期：2026-07-19
+- 状态：Accepted
+- 决策：场景摄像机正对咖啡店中心，水平旋转为 0°，采用约 20°–25°向下俯拍的正交或近正交投影。后墙与柜台水平展开，房间纵深沿屏幕上下方向表达；禁止等距菱形构图、侧向观察和高机位地图式俯视。
+- 影响：DEC-005 中的 3/4 伪等距视觉部分被本决策取代，DEC-009 的八方向移动继续有效。场景、家具和角色素材必须同时展示足够顶面与正面，适配超宽低高度窗口；CON-004 作为视角与气质参考，不能直接作为运行时背景。
+
+### DEC-014 — 温暖木屋首版空间分区
+
+- 日期：2026-07-19
+- 状态：Accepted
+- 决策：首版木屋主题采用用户草图确认的横向分区：最左侧入口，左中短柜台，右侧两组靠窗小桌，前方右侧四人高凳长桌。点单与取餐分开，并由咖啡机或杯架在柜台中部形成视觉分隔；柜台后保留可容纳两名店员的连续工作区。黑板菜单、壁炉、绿植和入口小物作为次级标志物。
+- 影响：CON-005 是正式资产拆分与游戏布局的主要构图参考，但仍不能直接作为运行时背景。窗框、玻璃和窗外景色必须分层，当前缺省为白天晴朗，未来可替换为当地天气；柜台不得重新扩展到右侧座位区。
 
 ## English
 
@@ -144,6 +172,34 @@ Statuses: `Accepted`, `Superseded`, and `Proposed`.
 ### DEC-010 — Core gameplay before final window behavior
 
 - Date: 2026-07-15
-- Status: Accepted
+- Status: Superseded by DEC-011
 - Decision: retain the bottom desktop window as a product goal, but defer final rendering size, docking, and always-on-top issues while completing the drink loop, placeholder NPCs, and player-priority rules.
 - Consequence: the current 1280×720 rendering and broken always-on-top toggle are tracked as deferred issues rather than gameplay blockers; Windows validation must resume after the core experience is stable.
+
+### DEC-011 — Vertical slice before release-grade window polish
+
+- Date: 2026-07-19
+- Status: Accepted
+- Decision: the current window prototype is sufficient for content development. Build a single-player vertical slice that communicates the target atmosphere before stabilizing final sizing, docking, and always-on-top behavior for release.
+- Consequence: the 1280×720 and topmost issues remain tracked but do not block content work. Environment, character, UI, and music assets still require approval in `ASSETS.md` before import. Window validation must resume after the vertical slice; the desktop-window goal is not cancelled.
+
+### DEC-012 — Art, atmosphere, and music before gameplay
+
+- Date: 2026-07-19
+- Status: Accepted
+- Decision: Coffee Time is a companion application, not a gameplay-depth or loop-efficiency product. Its primary value comes from visual space, music, character presence, and low-interruption experience; ordering and similar mechanics only create a light connection to that space.
+- Consequence: the vertical slice must pass a passive-companionship test before interaction completeness is evaluated. New mechanics may not compromise visual calm, musical continuity, or the user's working attention. Content scheduling prioritizes environment art, representative music, and ambient character animation.
+
+### DEC-013 — Frontal-axis low-elevation oblique view
+
+- Date: 2026-07-19
+- Status: Accepted
+- Decision: the camera faces the center of the café with zero horizontal yaw and uses an orthographic or near-orthographic projection pitched downward by approximately 20°–25°. The back wall and counter run horizontally, while room depth maps to screen vertical movement. Isometric diamonds, corner views, and high map-like top-down views are prohibited.
+- Consequence: this supersedes the 3/4 pseudo-isometric visual portion of DEC-005 while DEC-009 eight-direction movement remains valid. Environment, furniture, and actor assets must expose enough top and front surfaces for the ultrawide low-height window. CON-004 is the camera and mood reference, not a runtime background.
+
+### DEC-014 — First warm-cabin spatial zoning
+
+- Date: 2026-07-19
+- Status: Accepted
+- Decision: the first warm-cabin theme follows the user's approved horizontal zoning: entrance at the far left, a short counter in the left-center, two small window tables on the right, and a four-stool communal table in the front-right. Ordering and pickup are separate, visually divided by a coffee machine or cup rack at the counter's center; a continuous work area behind the counter supports two baristas. A chalkboard menu, fireplace, plants, and small entrance props are secondary landmarks.
+- Consequence: CON-005 is the primary composition reference for production asset separation and gameplay layout, but remains prohibited as a direct runtime background. Window frames, glazing, and exterior views must be separate layers; fair daytime is the default while future local-weather scenes can replace the view. The counter may not expand back into the right seating zone.
