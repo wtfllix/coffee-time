@@ -1,0 +1,48 @@
+{
+  "schema": "coffee_time.unified_structure_candidate.v1",
+  "candidate_id": "CON-023",
+  "supersedes": "CON-022",
+  "canvas_px": { "width": 640, "height": 420 },
+  "pipeline": {
+    "map_mode": "scene_mode",
+    "visual_model": "layered_raster",
+    "runtime_object_model": "y_sorted_props",
+    "collision_model": "project_native_grid",
+    "engine_target": "Godot_4_7_project_native",
+    "visual_asset_source": "image_gen_plus_deterministic_normalization"
+  },
+  "projection": {
+    "type": "orthographic_isometric_2_to_1",
+    "room_grid": { "width": 10, "height": 10 },
+    "floor_corners_px": {
+      "back": [320, 125],
+      "left": [40, 265],
+      "right": [600, 265],
+      "front": [320, 405]
+    },
+    "wall_height_px": 122,
+    "wall_top_corners_px": {
+      "back": [320, 3],
+      "left": [40, 143],
+      "right": [600, 143]
+    }
+  },
+  "layers": [
+    {
+      "id": "unified_room_shell",
+      "path": "res://assets/candidates/warm_cabin/generate2dmap_v4/warm_cabin-room-shell-floor-v3-640x420.png",
+      "role": "stable_floor_walls_baseboard_windows",
+      "contains_runtime_objects": false,
+      "mapping": "native_canvas_1_to_1"
+    }
+  ],
+  "source": {
+    "floor_generated_image": "res://assets/candidates/warm_cabin/generate2dmap_v4/warm_cabin-floor-style-source-v3.png",
+    "floor_generation_prompt": "res://assets/candidates/warm_cabin/generate2dmap_v4/warm_cabin-floor-style-v3.prompt.txt",
+    "wall_generated_image": "res://assets/candidates/warm_cabin/generate2dmap_v4/warm_cabin-room-shell-source-v2.png",
+    "wall_generation_prompt": "res://assets/candidates/warm_cabin/generate2dmap_v4/warm_cabin-room-shell-geometry-v2.prompt.txt",
+    "normalization_tool": "res://tools/normalize_warm_cabin_room_shell.gd"
+  },
+  "collision_source": "res://scripts/art_tests/isometric_interior_blockout.gd",
+  "runtime_status": "approved_connected_to_isolated_f6_scene"
+}

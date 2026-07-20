@@ -1,0 +1,9 @@
+Use case: precise-object-edit
+Asset type: geometry-corrected production candidate for a Godot 4.7 isometric room foundation
+Primary request: Correct only the room-shell geometry and framing of the edit target so it strictly matches the accepted Coffee Time 640×420 blockout proportions.
+Input image: the visible generated empty wooden room is the edit target.
+Geometry correction: preserve a strict orthographic 2:1 isometric square room. In the final 640×420 composition, the rear floor corner must be at (320,125), the left floor corner at (40,265), the right floor corner at (600,265), and the front floor corner at (320,405). The rear corner must be exactly centered. Both wall top edges must start near y=3, producing 122 pixels of wall height above the rear floor corner. Left and right walls must be equal projected length, with no convergence. The four floor corners must form one symmetric 560×280 diamond; do not add clipped or chamfered front corners.
+Preserve exactly: unified warm walnut wall and floor materials, integrated wood-toned baseboard, long restrained plank grain, two right-wall windows and their scenery, central corner post, warm daytime light, modern pixel-art-inspired rendering, empty room contents, coherent wall-floor seam, and dark neutral exterior background.
+Change only: room silhouette, perspective cleanup, canvas occupation, and exact isometric corner placement.
+Constraints: keep the room completely empty and preserve one coherent wall-floor structure. The floor must continue naturally under the native baseboard. Keep every structural edge fully inside the frame.
+Avoid: no furniture, characters, props, décor, door, fireplace, blackboard, UI, text, watermark, grid, debug marks, black wall-floor gap, artificial seam strip, thick platform rim, perspective convergence, rectangular room, asymmetry, cropped edges, extra corners, bevelled front edge, or octagonal floor silhouette.

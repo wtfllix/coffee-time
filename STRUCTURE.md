@@ -7,14 +7,15 @@
 1. [`project.godot`](project.godot)：Godot 项目与窗口默认配置。
 2. [`scenes/main.tscn`](scenes/main.tscn)：运行入口场景。
 3. [`scripts/core/main.gd`](scripts/core/main.gd)：窗口停靠和全局界面装配。
-4. [`scripts/cafe/cafe_prototype.gd`](scripts/cafe/cafe_prototype.gd)：色块场景、网格寻路与玩家移动。
-5. [`scripts/actors/seat_occupancy.gd`](scripts/actors/seat_occupancy.gd)：顾客占座、玩家占座和最少空座规则。
-6. [`scripts/ui/prototype_toolbar.gd`](scripts/ui/prototype_toolbar.gd)：置顶、状态与退出控件。
-7. [`scripts/orders/order_controller.gd`](scripts/orders/order_controller.gd)：单杯订单状态机。
-8. [`scripts/ui/order_panel.gd`](scripts/ui/order_panel.gd)：饮品选择界面。
-9. [`scripts/audio/music_controller.gd`](scripts/audio/music_controller.gd)：频道、音量与播放状态。
-10. [`scripts/persistence/local_settings.gd`](scripts/persistence/local_settings.gd)：本地音乐设置读写。
-11. [`scripts/ui/music_panel.gd`](scripts/ui/music_panel.gd)：频道、播放与音量控件。
+4. [`scripts/art_tests/isometric_interior_blockout.gd`](scripts/art_tests/isometric_interior_blockout.gd)：当前紧凑等距可玩灰盒、逆投影与逻辑网格寻路。
+5. [`scripts/cafe/cafe_prototype.gd`](scripts/cafe/cafe_prototype.gd)：旧长条色块场景、网格寻路与玩家移动，作为回退参考。
+6. [`scripts/actors/seat_occupancy.gd`](scripts/actors/seat_occupancy.gd)：顾客占座、玩家占座和最少空座规则。
+7. [`scripts/ui/prototype_toolbar.gd`](scripts/ui/prototype_toolbar.gd)：置顶、状态与退出控件。
+8. [`scripts/orders/order_controller.gd`](scripts/orders/order_controller.gd)：单杯订单状态机。
+9. [`scripts/ui/order_panel.gd`](scripts/ui/order_panel.gd)：饮品选择界面。
+10. [`scripts/audio/music_controller.gd`](scripts/audio/music_controller.gd)：频道、音量与播放状态。
+11. [`scripts/persistence/local_settings.gd`](scripts/persistence/local_settings.gd)：本地音乐设置读写。
+12. [`scripts/ui/music_panel.gd`](scripts/ui/music_panel.gd)：频道、播放与音量控件。
 
 ### 当前目录
 
@@ -38,8 +39,10 @@ coffee-time/
 │   │   └── main.gd         # 桌面窗口和顶层装配
 │   ├── art_tests/
 │   │   ├── frontal_oblique_blockout.gd # DEC-013 投影与比例灰盒
+│   │   ├── isometric_interior_blockout.gd # 紧凑等距可玩灰盒、逆投影与 A*
 │   │   ├── warm_cabin_layout_blockout.gd # DEC-014 功能分区与角色尺度灰盒
-│   │   └── warm_cabin_structure_preview.gd # CON-006 结构层重复铺设预览
+│   │   ├── warm_cabin_structure_preview.gd # CON-006 结构层重复铺设预览
+│   │   └── warm_cabin_plank_preview.gd # CON-014 概念图约束木板与错缝铺设预览
 │   ├── cafe/
 │   │   └── cafe_prototype.gd # 色块咖啡店与点击移动
 │   ├── actors/
@@ -55,6 +58,8 @@ coffee-time/
 │       ├── prototype_toolbar.gd # 原型工具栏
 │       ├── order_panel.gd       # 点单面板
 │       └── music_panel.gd       # 音乐播放器面板
+├── tools/
+│   └── normalize_warm_cabin_room_shell.gd # CON-023 统一墙地的确定性几何规范化
 ├── data/
 │   └── drinks/             # 咖啡与红茶测试配置
 ├── assets/
@@ -66,10 +71,13 @@ coffee-time/
     ├── static_check.sh     # 不依赖 Godot 的引用与缩进检查
     ├── test_order_controller.gd # 单杯状态机测试
     ├── test_cafe_layout.gd      # 1920×270 宽度与座位可达性测试
+    ├── test_isometric_layout.gd # 10×10 对称投影、障碍与座位可达性测试
     ├── test_seat_occupancy.gd   # 玩家优先与最少空座测试
     ├── test_music_controller.gd # 音乐状态与本地设置测试
     └── test_music_panel.gd      # 播放器 UI 信号与显示测试
 ```
+
+当前 `res://scenes/main.tscn` 仍运行旧长条原型，作为订单和 UI 回退参考；`res://scenes/art_tests/isometric_interior_blockout.tscn` 是 DEC-015 的独立可玩迁移场景，尚未接入主入口。
 
 ### 当前运行关系
 
@@ -87,9 +95,11 @@ project.godot
           -> scripts/persistence/local_settings.gd
 ```
 
-`main.gd` 读取当前显示器的可用矩形，将窗口调整为全宽、25% 高，并贴到任务栏上方。它创建色块咖啡店和原型工具栏。启动和置顶切换后会输出一条 `[CoffeeTime][Window]` 结构化日志，记录嵌入状态、可用矩形和实际窗口状态，供 Windows 实机诊断。
+`project.godot` 以 640×420 像素作为紧凑等距方向的默认渲染与窗口基准。旧 `main.gd` 仍会在 F5 运行时读取当前显示器的可用矩形，将窗口调整为全宽、25% 高，并贴到任务栏上方。这是迁移期的旧主场景回退行为，不会控制 F6 等距场景的渲染比例。启动和置顶切换后会输出一条 `[CoffeeTime][Window]` 结构化日志，记录嵌入状态、可用矩形和实际窗口状态，供 Windows 实机诊断。
 
-`cafe_prototype.gd` 将可行走区域离散为 32 像素网格。鼠标点击地面后，脚本计算八方向网格路径，并让占位玩家沿路径移动。CON-003 因视角错误已从运行时撤下，当前恢复程序色块房间与家具；柜台、桌子和两名占位顾客不可通行，六个空座保持可达。正式视觉将依据 DEC-013 的投影、CON-004 的气质和 CON-005 的空间分区重制。
+`isometric_interior_blockout.gd` 是当前视角迁移目标。它在 10×10 方格坐标中运行八方向 A*，通过严格 2:1 等距公式绘制，并将鼠标屏幕坐标逆投影回逻辑格；当前每格投影为 56×28 像素，地面占 560×280 像素，墙高为 122 像素。柜台、桌子、壁炉、植物和两名顾客阻挡路径，六个空座保持可达。角色与室内物件在同一绘制队列中按 `x + y` 排序，用于保持前后遮挡。独立 F6 场景现在以 1:1 原生画布绘制 DEC-016 已锁定、ASSETS 已批准的 CON-023 结构底图；Godot `Image` 工具分别从 v3 地板源与原始 v2 墙体源采样，并确定性映射到相同的精确四角，墙体最后覆盖地板以保留原生木质墙脚。启用该底图时不绘制程序墙地和重复窗户；黑板、家具、角色与碰撞仍为独立程序层。CON-022 代码仅保留为失败过程回看，开关关闭。素材不决定碰撞，也不进入 F5。当前只接入移动与入座，订单仍在旧主场景中。
+
+`cafe_prototype.gd` 是旧长条回退原型。它继续承载已验证的订单空间交互，直到等距迁移场景通过 Windows 后再逐步移植，不再作为正式视觉方向。
 
 `seat_occupancy.gd` 独立记录顾客与玩家座位。顾客重新分配时跳过玩家已选座位，并限制顾客数量，使玩家始终至少有两个可用座位。
 
@@ -135,14 +145,16 @@ project.godot
 
 ```bash
 ./tests/static_check.sh
+godot4 --headless --path . --script tools/normalize_warm_cabin_room_shell.gd
 godot4 --headless --path . --quit
 godot4 --headless --path . --script tests/test_cafe_layout.gd
+godot4 --headless --path . --script tests/test_isometric_layout.gd
 godot4 --headless --path . --script tests/test_seat_occupancy.gd
 godot4 --headless --path . --script tests/test_music_controller.gd
 godot4 --headless --path . --script tests/test_music_panel.gd
 ```
 
-第一条检查必需文件、`res://` 文件引用和 GDScript 缩进；第二条才是权威的 Godot 解析检查。
+第一条检查必需文件、`res://` 文件引用和 GDScript 缩进；第二条从已选地板/墙体源图重新生成 CON-023 的 640×420 底图；第三条才是权威的 Godot 解析检查。在 Linux 中若第一条报告 `bash\r`，说明脚本仍是 Windows CRLF 换行，可在临时副本去除行尾 `\r` 后执行，不要为此覆盖用户尚未提交的文件。
 
 ## English
 
@@ -151,14 +163,15 @@ godot4 --headless --path . --script tests/test_music_panel.gd
 1. [`project.godot`](project.godot): Godot project and default window configuration.
 2. [`scenes/main.tscn`](scenes/main.tscn): runtime entry scene.
 3. [`scripts/core/main.gd`](scripts/core/main.gd): window docking and top-level assembly.
-4. [`scripts/cafe/cafe_prototype.gd`](scripts/cafe/cafe_prototype.gd): blockout scene, grid pathfinding, and player movement.
-5. [`scripts/actors/seat_occupancy.gd`](scripts/actors/seat_occupancy.gd): customer occupancy, player claims, and minimum free-seat rules.
-6. [`scripts/ui/prototype_toolbar.gd`](scripts/ui/prototype_toolbar.gd): always-on-top, status, and exit controls.
-7. [`scripts/orders/order_controller.gd`](scripts/orders/order_controller.gd): single-drink state machine.
-8. [`scripts/ui/order_panel.gd`](scripts/ui/order_panel.gd): drink selection UI.
-9. [`scripts/audio/music_controller.gd`](scripts/audio/music_controller.gd): channels, volume, and playback state.
-10. [`scripts/persistence/local_settings.gd`](scripts/persistence/local_settings.gd): local music-settings storage.
-11. [`scripts/ui/music_panel.gd`](scripts/ui/music_panel.gd): channel, playback, and volume controls.
+4. [`scripts/art_tests/isometric_interior_blockout.gd`](scripts/art_tests/isometric_interior_blockout.gd): current compact playable isometric migration scene, inverse projection, and logical-grid pathfinding.
+5. [`scripts/cafe/cafe_prototype.gd`](scripts/cafe/cafe_prototype.gd): old strip blockout, retained as the order/UI fallback reference.
+6. [`scripts/actors/seat_occupancy.gd`](scripts/actors/seat_occupancy.gd): customer occupancy, player claims, and minimum free-seat rules.
+7. [`scripts/ui/prototype_toolbar.gd`](scripts/ui/prototype_toolbar.gd): always-on-top, status, and exit controls.
+8. [`scripts/orders/order_controller.gd`](scripts/orders/order_controller.gd): single-drink state machine.
+9. [`scripts/ui/order_panel.gd`](scripts/ui/order_panel.gd): drink selection UI.
+10. [`scripts/audio/music_controller.gd`](scripts/audio/music_controller.gd): channels, volume, and playback state.
+11. [`scripts/persistence/local_settings.gd`](scripts/persistence/local_settings.gd): local music-settings storage.
+12. [`scripts/ui/music_panel.gd`](scripts/ui/music_panel.gd): channel, playback, and volume controls.
 
 ### Current directory tree
 
@@ -178,9 +191,11 @@ coffee-time/
 ├── scenes/art_tests/warm_cabin_atmosphere_preview.tscn
 ├── scenes/art_tests/warm_cabin_integrated_preview.tscn
 ├── scenes/art_tests/frontal_oblique_blockout.tscn
+├── scenes/art_tests/isometric_interior_blockout.tscn
 ├── scripts/
 │   ├── core/main.gd
 │   ├── art_tests/frontal_oblique_blockout.gd
+│   ├── art_tests/isometric_interior_blockout.gd
 │   ├── cafe/cafe_prototype.gd
 │   ├── actors/seat_occupancy.gd
 │   ├── audio/music_controller.gd
@@ -192,6 +207,7 @@ coffee-time/
 │       ├── prototype_toolbar.gd
 │       ├── order_panel.gd
 │       └── music_panel.gd
+├── tools/normalize_warm_cabin_room_shell.gd # deterministic CON-023 geometry normalization
 ├── data/drinks/
 ├── assets/
 │   ├── candidates/
@@ -202,10 +218,13 @@ coffee-time/
     ├── static_check.sh
     ├── test_order_controller.gd
     ├── test_cafe_layout.gd
+    ├── test_isometric_layout.gd
     ├── test_seat_occupancy.gd
     ├── test_music_controller.gd
     └── test_music_panel.gd
 ```
+
+`res://scenes/main.tscn` still runs the old strip prototype as an order/UI fallback. `res://scenes/art_tests/isometric_interior_blockout.tscn` is DEC-015's isolated playable migration scene and is not yet the main entry point.
 
 ### Current runtime relationships
 
@@ -223,9 +242,11 @@ project.godot
           -> scripts/persistence/local_settings.gd
 ```
 
-`main.gd` reads the current monitor's usable rectangle, makes the window full-width and 25% high, and docks it above the taskbar. It assembles the blockout café and prototype toolbar. Startup and topmost changes print one structured `[CoffeeTime][Window]` marker with embedded state, usable rectangle, and actual window state for Windows diagnostics.
+`project.godot` uses 640×420 pixels as the default render and window baseline for the compact isometric direction. The legacy `main.gd` still reads the current monitor's usable rectangle during F5, makes the window full-width and 25% high, and docks it above the taskbar. That is a migration-time fallback for the old main scene and does not control the F6 isometric scene's render aspect. Startup and topmost changes print one structured `[CoffeeTime][Window]` marker with embedded state, usable rectangle, and actual window state for Windows diagnostics.
 
-`cafe_prototype.gd` divides the walkable area into a 32-pixel grid. A floor click produces an eight-direction grid path that the placeholder player follows. Counters, tables, and two placeholder customers are solid, while six green free seats remain reachable. The scene also draws one fixed placeholder barista.
+`isometric_interior_blockout.gd` is the current camera-migration target. It runs eight-direction A* on a logical 10×10 square grid, renders through a strict 2:1 transform, and inverse-projects mouse positions back into grid coordinates. Each cell currently projects to 56×28 pixels, the floor occupies 560×280 pixels, and the walls are 122 pixels high. The counter, tables, fireplace, plants, and two customers are solid while six free seats remain reachable. Actors and interior objects share an `x + y` draw queue for front/back occlusion. The isolated F6 scene now draws the DEC-016-locked, ASSETS-approved CON-023 room shell at native 1:1 canvas scale. A Godot `Image` tool samples the v3 floor source and original v2 wall source separately, then deterministically maps both into the same exact locked corners; walls composite over the floor to retain the native wooden baseboard. With this shell active, procedural walls, floor, and duplicate windows remain disabled while the blackboard, furniture, actors, and collision stay separate. CON-022 code remains only for failed-process inspection with its switch disabled. The art does not define collision and is not used by F5. Movement and sitting are connected; orders remain in the old main scene.
+
+`cafe_prototype.gd` is the old strip fallback. It retains the validated order-space interactions until the isometric migration passes Windows testing and is no longer the production visual direction.
 
 `seat_occupancy.gd` independently tracks customer and player seats. Customer reassignment skips the player's claimed seat and caps customer occupancy so at least two seats remain player-accessible.
 
@@ -244,8 +265,8 @@ project.godot
 ### Click-movement call chain
 
 1. The player presses the left mouse button in the café.
-2. `cafe_prototype.gd::_gui_input()` receives the position.
-3. The position is converted into an A* grid cell.
+2. `isometric_interior_blockout.gd::_gui_input()` receives the position in the migration scene.
+3. The screen position is inverse-projected into a logical A* grid cell.
 4. Solid destinations are rejected; valid destinations produce a point path.
 5. `_process()` moves through path segments and updates facing direction.
 6. Arrival publishes status text for the toolbar.
@@ -271,11 +292,13 @@ These do not exist yet and must not be described as implemented:
 
 ```bash
 ./tests/static_check.sh
+godot4 --headless --path . --script tools/normalize_warm_cabin_room_shell.gd
 godot4 --headless --path . --quit
 godot4 --headless --path . --script tests/test_cafe_layout.gd
+godot4 --headless --path . --script tests/test_isometric_layout.gd
 godot4 --headless --path . --script tests/test_seat_occupancy.gd
 godot4 --headless --path . --script tests/test_music_controller.gd
 godot4 --headless --path . --script tests/test_music_panel.gd
 ```
 
-The first command checks required files, `res://` file references, and GDScript indentation. The second is the authoritative Godot parse check.
+The first command checks required files, `res://` file references, and GDScript indentation. The second regenerates the 640×420 CON-023 shell from the selected floor and wall sources. The third is the authoritative Godot parse check. If the first command reports `bash\r` on Linux, the script still uses Windows CRLF endings; run a temporary LF-normalized copy rather than overwriting uncommitted user files.

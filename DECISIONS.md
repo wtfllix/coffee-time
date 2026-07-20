@@ -91,16 +91,23 @@
 ### DEC-013 — 正面轴向低机位俯视视角
 
 - 日期：2026-07-19
-- 状态：Accepted
+- 状态：Superseded by DEC-015
 - 决策：场景摄像机正对咖啡店中心，水平旋转为 0°，采用约 20°–25°向下俯拍的正交或近正交投影。后墙与柜台水平展开，房间纵深沿屏幕上下方向表达；禁止等距菱形构图、侧向观察和高机位地图式俯视。
 - 影响：DEC-005 中的 3/4 伪等距视觉部分被本决策取代，DEC-009 的八方向移动继续有效。场景、家具和角色素材必须同时展示足够顶面与正面，适配超宽低高度窗口；CON-004 作为视角与气质参考，不能直接作为运行时背景。
 
 ### DEC-014 — 温暖木屋首版空间分区
 
 - 日期：2026-07-19
-- 状态：Accepted
+- 状态：Superseded by DEC-015
 - 决策：首版木屋主题采用用户草图确认的横向分区：最左侧入口，左中短柜台，右侧两组靠窗小桌，前方右侧四人高凳长桌。点单与取餐分开，并由咖啡机或杯架在柜台中部形成视觉分隔；柜台后保留可容纳两名店员的连续工作区。黑板菜单、壁炉、绿植和入口小物作为次级标志物。
 - 影响：CON-005 是正式资产拆分与游戏布局的主要构图参考，但仍不能直接作为运行时背景。窗框、玻璃和窗外景色必须分层，当前缺省为白天晴朗，未来可替换为当地天气；柜台不得重新扩展到右侧座位区。
+
+### DEC-015 — 紧凑正方形等距室内
+
+- 日期：2026-07-19
+- 状态：Accepted
+- 决策：首版垂直切片改用 10×10 逻辑正方形房间和严格正交 2:1 等距投影。房间无屋顶，前方两面墙剖开，只保留等长的后方 L 形墙；默认预览基准为 640×420 像素紧凑窗口，优先放置在桌面角落，不再以横跨屏幕底部的 1280×270 长条作为正式构图目标。室内必须占画面主体，禁止完整建筑外壳、街道和屋顶设备挤压室内氛围。
+- 影响：本决策取代 DEC-013、DEC-014 的横向构图，以及 DEC-011 中仍保留的底部长条窗口目标；DEC-011“先做垂直切片、后做发布级窗口打磨”的排期仍有效。点击移动、八方向逻辑、订单状态机、座位规则、音乐和主题系统继续保留；底层在方格坐标中运行，显示层通过等距投影转换。入口、分离的点单/取餐位、双店员工作带、两张双人桌、四人共享桌、黑板、壁炉、植物和可替换天气窗景继续作为功能要求，但位置按正方形房间重排。CON-017 是当前视角与氛围候选参考，仍不能直接作为运行时背景。
 
 ## English
 
@@ -193,13 +200,27 @@ Statuses: `Accepted`, `Superseded`, and `Proposed`.
 ### DEC-013 — Frontal-axis low-elevation oblique view
 
 - Date: 2026-07-19
-- Status: Accepted
+- Status: Superseded by DEC-015
 - Decision: the camera faces the center of the café with zero horizontal yaw and uses an orthographic or near-orthographic projection pitched downward by approximately 20°–25°. The back wall and counter run horizontally, while room depth maps to screen vertical movement. Isometric diamonds, corner views, and high map-like top-down views are prohibited.
 - Consequence: this supersedes the 3/4 pseudo-isometric visual portion of DEC-005 while DEC-009 eight-direction movement remains valid. Environment, furniture, and actor assets must expose enough top and front surfaces for the ultrawide low-height window. CON-004 is the camera and mood reference, not a runtime background.
 
 ### DEC-014 — First warm-cabin spatial zoning
 
 - Date: 2026-07-19
-- Status: Accepted
+- Status: Superseded by DEC-015
 - Decision: the first warm-cabin theme follows the user's approved horizontal zoning: entrance at the far left, a short counter in the left-center, two small window tables on the right, and a four-stool communal table in the front-right. Ordering and pickup are separate, visually divided by a coffee machine or cup rack at the counter's center; a continuous work area behind the counter supports two baristas. A chalkboard menu, fireplace, plants, and small entrance props are secondary landmarks.
 - Consequence: CON-005 is the primary composition reference for production asset separation and gameplay layout, but remains prohibited as a direct runtime background. Window frames, glazing, and exterior views must be separate layers; fair daytime is the default while future local-weather scenes can replace the view. The counter may not expand back into the right seating zone.
+
+### DEC-015 — Compact square isometric interior
+
+- Date: 2026-07-19
+- Status: Accepted
+- Decision: the first vertical slice uses a logical 10×10 square room under strict orthographic 2:1 isometric projection. The room is roofless with both front walls cut away and equal-length rear L-shaped walls retained. The default preview baseline is a compact 640×420 corner-oriented desktop window rather than a 1280×270 strip spanning the bottom of the display. The interior must dominate the image; a complete building shell, street, or rooftop equipment may not displace the café atmosphere.
+- Consequence: this supersedes DEC-013, DEC-014's horizontal composition, and the retained bottom-strip target in DEC-011; DEC-011's sequencing of vertical slice before release-grade window polish remains valid. Click movement, eight-direction logic, order state machine, seating rules, music, and theme systems remain. Runtime logic stays in square-grid coordinates and the presentation layer applies the isometric transform. The entrance, separated order/pickup points, two-barista work aisle, two two-seat tables, four-seat communal table, blackboard, fireplace, plants, and replaceable weather window layers remain functional requirements but are rearranged inside the square room. CON-017 is the current camera and atmosphere candidate and remains prohibited as a runtime background.
+
+### DEC-016 — Approved warm-cabin structural foundation
+
+- Date: 2026-07-21
+- Status: Accepted
+- Decision: lock CON-023 as the first warm-cabin room foundation. The runtime design canvas remains 640×420 pixels with a strict orthographic 2:1 projection, a logical 10×10 square floor, floor corners at `(320,125)`, `(40,265)`, `(600,265)`, and `(320,405)`, and 122-pixel rear walls. The selected visual output combines the lightly rustic wide-plank warm-walnut v3 floor with the original v2 wall, native baseboard, corner post, and two-window source through deterministic 2× supersampled normalization.
+- Consequence: future furniture, counter, fireplace, décor, character, and weather-window assets must match this foundation's projection, scale, wood family, and restrained texture density. The room shell remains independent from pathfinding, collision, furniture, actors, and interactions. F6 is the validated integration target while F5 migration remains a later implementation step. Any change to the locked projection, room footprint, wall height, or selected wall/floor source requires a superseding decision rather than another untracked visual iteration.

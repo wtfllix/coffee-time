@@ -1,0 +1,8 @@
+Use case: precise-object-edit
+Asset type: alternate floor-material candidate for the CON-023 Godot room foundation
+Primary request: Change only the wooden floor material of the empty-room edit target. Match the floor character visible in the supplied furnished Coffee Time concept and harmonize it with the existing wall wood.
+Input images: Image 1 is the empty-room edit target; Image 2 is the authoritative floor texture and mood reference.
+Change only: replace the bright orange, narrow, high-frequency floor boards with calmer medium-dark warm walnut planks. Use visibly wider and longer boards, fewer end joints, staggered joins, restrained straight grain, low contrast between neighboring boards, and subtle warm wear. The floor should feel matte, cozy, weighty, and slightly lighter than the walls while clearly belonging to the same wood family.
+Preserve exactly: every wall pixel and wall material, both windows and scenery, central corner post, native baseboard, wall-floor seam, strict room geometry, camera, framing, lighting direction, exterior background, and completely empty contents.
+Constraints: floor plank axes must remain consistent with the strict isometric plane; no grid-like square tiles; no repeated rectangular texture blocks; no dense hairline grain; no orange glow; no near-black gaps.
+Avoid: do not alter walls, baseboard, windows, geometry, perspective, room silhouette, canvas occupation, lighting, shadows, or background. No furniture, characters, props, décor, labels, text, watermark, UI, grid, checkerboard, floor border, platform rim, bevelled corner, black seam, rugs, stains, or photorealistic wood.

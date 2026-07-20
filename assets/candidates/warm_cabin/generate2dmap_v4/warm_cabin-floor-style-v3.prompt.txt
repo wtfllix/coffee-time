@@ -1,0 +1,8 @@
+Use case: precise-object-edit
+Asset type: alternate floor-material candidate for the CON-023 Godot room foundation
+Primary request: Make only the wooden floor in the supplied empty-room edit target feel a little more rustic and lived-in. This is a very small texture refinement of the accepted wider-plank direction, not a redesign.
+Input images: Image 1 is the exact edit target and authoritative geometry/style baseline.
+Change only: add restrained handcrafted character to the floor boards: subtle board-to-board value variation, a few short low-contrast straight grain marks, occasional gently irregular end joints, and very soft sparse worn patches. Keep the current medium-dark warm walnut color, wide long planks, low texture density, matte finish, and calm cozy appearance.
+Preserve exactly: all walls and their material, both windows and scenery, central corner post, native baseboard, wall-floor seam, strict isometric geometry, camera, framing, lighting direction, exterior background, room silhouette, canvas occupation, and completely empty contents. Preserve the current floor board width, length, direction, overall color, and number of seams.
+Intensity limit: the added roughness must be barely noticeable at first glance and readable only as natural material variation. Do not make the floor old, damaged, dirty, noisy, photorealistic, or heavily weathered.
+Avoid: no dense grain, long curving grain, knots everywhere, cracks, gouges, dark scratches, stains, dirt, high-frequency speckles, orange glow, near-black gaps, grid tiles, repeated rectangular texture blocks, new shadows, furniture, characters, props, decor, text, watermark, UI, checkerboard, floor border, platform rim, bevelled corner, or black seam.
